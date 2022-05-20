@@ -1,0 +1,35 @@
+note over selain:
+Haetaan HTTP-protokollan GET-metodin
+avulla SPA-sivun HTML-koodi.
+end note
+
+selain->palvelin: HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa
+palvelin-->selain: HTML-koodi
+
+note over selain:
+Haetaan palvelimelta sivun ulkoasun 
+määrittelevä CSS-tyylitiedosto.
+end note
+
+selain->palvelin: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+palvelin-->selain: main.css
+
+note over selain:
+Haetaan palvelimelta SPA-sivun JavaScript-koodi.
+end note
+
+selain->palvelin: HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa.js
+palvelin-->selain: spa.js
+
+note over selain:
+Selain aloittaa JavaScript-koodin suorittamisen,
+joka puolestaan pyytää palvelimelta JSON-datan.
+end note
+
+selain->palvelin: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+palvelin-->selain: [{ content: "HTML on helppoa", date: "2019-01-01" }, ...]
+
+note over selain:
+Selain suorittaa muistiinpanot 
+näytölle renderöivän tapahtumankäsittelijän.
+end note

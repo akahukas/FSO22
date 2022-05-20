@@ -1,0 +1,37 @@
+note over selain:
+Selaimen aiemmin lataama JavaScript-koodi
+luo uuden muistiinpanon, lisää sen muistiinpanojen
+listalle ja piirtää listan uudelleen ruudulle.
+end note
+
+note over selain:
+Tämän jälkeen hyödynnetään HTTP-protokollan POST-metodia
+uuden muistiinpanon lähettämiseen palvelimelle.
+end note
+
+note over selain:
+Palvelimelle lähetettävä muistiinpano
+on JSON-muotoisena pakettina, eli 
+siinä on sekä sisältö että aikaleima.
+end note
+
+selain->palvelin: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+
+note over palvelin:
+Uusi muistiinpano saapuu palvelimelle,
+se tallennetaan palvelimella sijaitsevien 
+kaikkien muistiinpanojen joukkoon.
+end note
+
+note over palvelin:
+Palautetaan selaimelle statuskoodi 201, 
+eli tieto siitä, että muistiinpano on
+saapunut ja se on tallennettu palvelimelle.
+end note
+
+palvelin-->selain: HTTP-statuskoodi 201
+
+note over selain:
+Selain säilyy samalla SPA-sivulla ilman sen
+uudelleenlatausta ja muita HTTP-pyyntöjä.
+end note
