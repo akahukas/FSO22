@@ -1,28 +1,43 @@
 import { useState } from 'react'
 
-const Statistics = (props) => {
+const Button = (props) => {
   return (
-    <div>
-      <h1>{props.header}</h1>
-      <p>
-        {props.goodStr} {props.good}
-      </p>
-      <p>
-        {props.neutralStr} {props.neutral}
-      </p>
-      <p>
-        {props.badStr} {props.bad}
-      </p>
-      <p>
-        {props.totalStr} {props.total}
-      </p>
-      <p>
-        {props.averageStr} {props.average}
-      </p>
-      <p>
-        {props.positiveStr} {10 * props.positive} %
-      </p>
-    </div>
+    <button onClick={props.handleClick}>{props.text}</button>
+  )
+}
+
+const StatisticLine = (props) => {
+  return (
+    <tr>
+      <td>{props.text}</td>
+      <td>{props.value} {props.suffix}</td>
+    </tr>
+  )
+}
+
+const Statistics = (props) => {
+  
+  // Ehdollinen renderöinti kokonaismäärämuuttujan avulla.
+  if (props.total === 0) {
+    return (
+      <div>
+        No feedback given.
+      </div>
+    )
+  }
+  
+  return (
+    <table>
+      <tbody>
+        <StatisticLine text={props.goodStr} value={props.good} />
+        <StatisticLine text={props.neutralStr} value={props.neutral} />
+        <StatisticLine text={props.badStr} value={props.bad} />
+        <StatisticLine text={props.totalStr} value={props.total} />
+        <StatisticLine text={props.averageStr} value={props.average} />
+        <StatisticLine text={props.positiveStr} value={10 * props.positive} 
+                       suffix='%' />
+      </tbody>
+    </table>
   )
 }
 
@@ -35,14 +50,17 @@ const App = () => {
   // Nappien tapahtumankäsittelijät.
   const handleGood = () => {
     setGood(good + 1)
+    console.log('One positive feedback received.')
   }
 
   const handleNeutral = () => {
     setNeutral(neutral + 1)
+    console.log('One neutral feedback received.')
   }
 
   const handleBad = () => {
     setBad(bad + 1)
+    console.log('One negative feedback received.')
   }
 
   // Muuttujat, jotka sisältävät tilastotietoa.
@@ -53,15 +71,16 @@ const App = () => {
   return (
     <div>
       <h1>Give feedback!</h1>
-      <button onClick={handleGood}>Good</button>
-      <button onClick={handleNeutral}>Neutral</button>
-      <button onClick={handleBad}>Bad</button>
-      <Statistics header='Statistics:' goodStr='Good:' good={good}
-                                       neutralStr='Neutral:' neutral={neutral}
-                                       badStr='Bad:' bad={bad}
-                                       totalStr='Total:' total={totalFeedback}
-                                       averageStr='Average:' average={averageFeedback}
-                                       positiveStr='Positive:' positive={positiveFeedback} />
+      <Button handleClick={handleGood} text='Good'/>
+      <Button handleClick={handleNeutral} text='Neutral'/>
+      <Button handleClick={handleBad} text='Bad'/>
+      <h1>Statistics:</h1>
+      <Statistics goodStr='Good:' good={good}
+                  neutralStr='Neutral:' neutral={neutral}
+                  badStr='Bad:' bad={bad}
+                  totalStr='Total:' total={totalFeedback}
+                  averageStr='Average:' average={averageFeedback}
+                  positiveStr='Positive:' positive={positiveFeedback} />
     </div>
   )
 }
