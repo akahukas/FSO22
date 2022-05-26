@@ -21,8 +21,27 @@ const App = () => {
    
   const [selected, setSelected] = useState(0)
 
-  // Napin tapahtumankäsittelijä.
-  const handleClick = () => {
+  // Alustetaan tietorakenne anekdoottitaulukon 
+  // pituiseksi ja täytetään se nollilla.
+  const [votes, setVotes] = useState(Array(anecdotes.length).fill(0))
+
+  // Äänestysnapin tapahtumakäsittelijä.
+  const handleVote = () => {
+    // Kopioidaan alkup. taulukko muuttujaan.
+    let votes_copy = [...votes]
+
+    // Kasvatetaan ruudulla näkyvän anekdootin
+    // äänimäärää tietorakenteessa.
+    votes_copy[selected] += 1
+
+    // Asetetaan kopio alkup. tietorakenteen tilaksi
+    // ja tulostetaan ilmoitus konsoliin lisätystä äänestä.
+    setVotes(votes_copy)
+    console.log('Index of voted anecdote:', selected)
+  }
+
+  // Seuraavan anekdootin asettavan napin tapahtumankäsittelijä.
+  const handleNext = () => {
     
     // Haetaan satunnaisluku ja tallennetaan se muuttujaan. 
     let randomNumber = getRandomNumber()
@@ -50,7 +69,9 @@ const App = () => {
   return (
     <div>
       <p>{anecdotes[selected]}</p>
-      <button onClick={handleClick}>Next anecdote</button>
+      <p>has {votes[selected]} votes</p>
+      <button onClick={handleVote}>Vote</button>
+      <button onClick={handleNext}>Next anecdote</button>
     </div>
   )
 }
