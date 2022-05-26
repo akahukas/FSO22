@@ -25,6 +25,11 @@ const App = () => {
   // pituiseksi ja täytetään se nollilla.
   const [votes, setVotes] = useState(Array(anecdotes.length).fill(0))
 
+  // Haetaan äänitietorakenteesta suurin äänien määrä ja
+  // kyseisen äänimäärän indeksi. Tallennetaan ne muuttujiin.
+  const mostVotes = Math.max(...votes)
+  const mostVotesIndex = votes.indexOf(mostVotes)
+
   // Äänestysnapin tapahtumakäsittelijä.
   const handleVote = () => {
     // Kopioidaan alkup. taulukko muuttujaan.
@@ -68,10 +73,14 @@ const App = () => {
 
   return (
     <div>
+      <h1>Anecdote of the day:</h1>
       <p>{anecdotes[selected]}</p>
       <p>has {votes[selected]} votes</p>
       <button onClick={handleVote}>Vote</button>
       <button onClick={handleNext}>Next anecdote</button>
+      <h1>Most voted anecdote:</h1>
+      <p>{anecdotes[mostVotesIndex]}</p>
+      <p>has {mostVotes} votes</p>
     </div>
   )
 }
