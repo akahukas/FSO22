@@ -1,10 +1,19 @@
 import { useState } from 'react'
+import PersonForm from './components/PersonForm'
+import Persons from './components/Persons'
+import Filter from './components/Filter'
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas' }
+    { name: 'Arto Hellas', number: '040-123456' },
+    { name: 'Ada Lovelace', number: '39-44-5323523' },
+    { name: 'Dan Abramov', number: '12-43-234345' },
+    { name: 'Mary Poppendieck', number: '39-23-6423122' }
   ]) 
   const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
+  const [newFilter, setNewFilter] = useState('')
+  const [showAll, setShowAll] = useState(true)
 
   // Lomakkeen tapahtumankäsittelijä.
   const addName = (event) => {
@@ -17,58 +26,65 @@ const App = () => {
       ({name}) => name === newName
     )
     
-    // Estetään tyhjän nimen lisääminen tietorakenteeseen.
-    if (newName === '') {
-      return
-    }
-
-    // Jos lisättävä nimi on jo tietorakenteessa.
-    else if (foundPerson !== undefined) {
+    if (foundPerson !== undefined) {
 
       // Tallennetaan muuttujaan viesti
       // ja annetaan käyttäjälle virheilmoitus.
       const alertMessage = `${newName} is already added to phonebook`
       window.alert(alertMessage)
 
-      // Tyhjennetään syöttökenttä.
+      // Tyhjennetään syöttökentät.
       setNewName('')
+      setNewNumber('')
       
       return
     }
     
     // Jos lisättävä nimi on kelvollinen, luodaan yhteystieto-olio.
     const personObject = {
-      name: newName
+      name: newName,
+      number: newNumber
     }
 
     // Lisätään uusi yhteystieto-olio 
-    // tietorakenteeseen ja tyhjennetään syöttökenttä.
+    // tietorakenteeseen ja tyhjennetään syöttökentät.
     setPersons(persons.concat(personObject))
     setNewName('')
+    setNewNumber('')
   }
 
-  // Muutoksenkäsittelijä yhteystieto-olion nimen syöttökentälle.
+  // Muutoksenkäsittelijät yhteystieto-olion 
+  // nimen ja puhelinnumeron syöttökentille.
   const handleNameChange = (event) => setNewName(event.target.value)
+  const handleNumberChange = (event) => setNewNumber(event.target.value)
+  
+  // Tapahtumankäsittelijä filtterin syöttökentälle.
+  const handleFilterChange = (event) => {
+    setNewFilter(event.target.value)
+    if (newFilter === '') {
+      setShowAll(true)
+    }
+    else {
+      setShowAll(false)
+    }
+  }
+
+  // Määritetään muuttujaan näytettävät 
+  // yhteystiedot riippuen tilasta <showAll>.
+  const personsToShow = showAll
+    ? persons
+    : persons.filter(person => person.name.toLowerCase().includes(newFilter))
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <form onSubmit={addName}>
-        <div>
-          name: <input
-                  value={newName}
-                  onChange={handleNameChange}
-                />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      <div>
-        {persons.map(person =>
-          <p key={person.name}>{person.name}</p>)}  
-      </div>
+      <Filter filterValue={newFilter} handleFilterChange={handleFilterChange}/>
+      <h3>Add a new contact:</h3>
+      <PersonForm handleSubmit={addName} nameValue={newName} 
+            handleNameChange={handleNameChange} numberValue={newNumber}
+            handleNumberChange={handleNumberChange}/>
+      <h3>Contacts:</h3>
+      <Persons personsToShow={personsToShow}/>
     </div>
   )
 }
