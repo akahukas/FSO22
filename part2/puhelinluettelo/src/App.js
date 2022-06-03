@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import personService from './services/persons'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import Filter from './components/Filter'
@@ -15,11 +15,11 @@ const App = () => {
   // palvelimelta ja asetetaan ne tilaan ruudulle.
   const hook = () => {
     console.log('Effect.')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
+    personService
+      .getAll()
+      .then(initialPersons => {
         console.log('Promise fulfilled.')
-        setPersons(response.data)
+        setPersons(initialPersons)
       })
   }
   
@@ -35,13 +35,27 @@ const App = () => {
     const foundPerson = persons.find(
       ({name}) => name === newName
     )
+
+    // Luodaan yhteystieto-olio.
+    const personObject = {
+      name: newName,
+      number: newNumber
+    }
     
+    // Jos haettu nimi on jo tietorakenteessa, kysytään 
+    // käyttäjän halukkuutta muokata annettua yhteystietoa.
     if (foundPerson !== undefined) {
 
-      // Tallennetaan muuttujaan viesti
-      // ja annetaan käyttäjälle virheilmoitus.
-      const alertMessage = `${newName} is already added to phonebook`
-      window.alert(alertMessage)
+      const confirmMessage = `${newName} is already added to phonebook, replace the old number with a new one?`
+      
+      // Päivitetään määritetty yhteystieto palvelimelle
+      // ja renderöidään muokatut yhteystiedot ruudulle.
+      if (window.confirm(confirmMessage)) {
+        personService
+          .updateOld(foundPerson.id, personObject).then(returnedPerson => {
+            setPersons(persons.map(person => person.id !== foundPerson.id ? person : returnedPerson))
+          })
+      }
 
       // Tyhjennetään syöttökentät.
       setNewName('')
@@ -49,18 +63,16 @@ const App = () => {
       
       return
     }
-    
-    // Jos lisättävä nimi on kelvollinen, luodaan yhteystieto-olio.
-    const personObject = {
-      name: newName,
-      number: newNumber
-    }
 
-    // Lisätään uusi yhteystieto-olio 
-    // tietorakenteeseen ja tyhjennetään syöttökentät.
-    setPersons(persons.concat(personObject))
-    setNewName('')
-    setNewNumber('')
+    // Lähetetään yhteystieto-olio palvelimelle, renderöidään
+    // muokattu tietorakenne ja tyhjennetään syöttökentät.
+    personService
+      .createNew(personObject)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
+        setNewName('')
+        setNewNumber('')
+      })
   }
 
   // Muutoksenkäsittelijät yhteystieto-olion 
@@ -94,7 +106,11 @@ const App = () => {
             handleNameChange={handleNameChange} numberValue={newNumber}
             handleNumberChange={handleNumberChange}/>
       <h3>Contacts:</h3>
-      <Persons personsToShow={personsToShow}/>
+      <Persons 
+        personsToShow={personsToShow}
+        persons={persons}
+        setPersons={setPersons}
+      />
     </div>
   )
 }
