@@ -3,6 +3,8 @@ import personService from './services/persons'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import Filter from './components/Filter'
+import SuccessNotification from './components/SuccessNotification'
+import ErrorNotification from './components/ErrorNotification'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
@@ -10,6 +12,8 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
   const [showAll, setShowAll] = useState(true)
+  const [successMessage, setSuccessMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   // Haetaan Effect-hookilla yhteystiedot paikalliselta
   // palvelimelta ja asetetaan ne tilaan ruudulle.
@@ -48,12 +52,33 @@ const App = () => {
 
       const confirmMessage = `${newName} is already added to phonebook, replace the old number with a new one?`
       
-      // Päivitetään määritetty yhteystieto palvelimelle
-      // ja renderöidään muokatut yhteystiedot ruudulle.
+      // Toimenpiteet, jos käyttäjä päättää muokata palvelimella olevia tietoja.
       if (window.confirm(confirmMessage)) {
+
+        // Päivitetään vanhoja tietoja.
         personService
           .updateOld(foundPerson.id, personObject).then(returnedPerson => {
             setPersons(persons.map(person => person.id !== foundPerson.id ? person : returnedPerson))
+            
+            // Päivityksen onnistuessa renderöidään ruudulle ilmoitus onnistumisesta.
+            setSuccessMessage(
+              `Number of ${foundPerson.name} was changed to ${newNumber}.`
+            )
+            setTimeout(() => {
+              setSuccessMessage(null)
+            }, 5000)
+          })
+
+          // Päivityksen epäonnistuessa renderöidään ruudulle ilmoitus
+          // epäonnistumisesta ja vain palvelimella olevat yhteystiedot.
+          .catch(error => {
+            setErrorMessage(
+              `Contact information of ${foundPerson.name} has already been removed from the server.`
+            )
+            setTimeout(() => {
+              setErrorMessage(null)
+            }, 5000)
+            setPersons(persons.filter(validPerson => validPerson.id !== foundPerson.id))
           })
       }
 
@@ -73,6 +98,14 @@ const App = () => {
         setNewName('')
         setNewNumber('')
       })
+      
+      // Renderöidään ruudulle onnistumisilmoitus yhteystiedon lisäämisestä.
+      setSuccessMessage(
+        `Added ${personObject.name} to contacts with telephone number ${newNumber}.`
+      )
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 5000)
   }
 
   // Muutoksenkäsittelijät yhteystieto-olion 
@@ -100,6 +133,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <SuccessNotification message={successMessage} />
+      <ErrorNotification message={errorMessage} />
       <Filter filterValue={newFilter} handleFilterChange={handleFilterChange}/>
       <h3>Add a new contact:</h3>
       <PersonForm handleSubmit={addName} nameValue={newName} 
@@ -110,6 +145,7 @@ const App = () => {
         personsToShow={personsToShow}
         persons={persons}
         setPersons={setPersons}
+        setSuccessMessage={setSuccessMessage}
       />
     </div>
   )

@@ -1,6 +1,6 @@
 import Button from './Button'
 
-const Persons = ({personsToShow, persons, setPersons}) => {
+const Persons = ({personsToShow, persons, setPersons, setSuccessMessage}) => {
     return (
       <div>
         {personsToShow.map(person =>
@@ -9,6 +9,7 @@ const Persons = ({personsToShow, persons, setPersons}) => {
                                           person={person}
                                           persons={persons}
                                           setPersons={setPersons}
+                                          setSuccessMessage={setSuccessMessage}
                                         />
           </p>    
         )}  
