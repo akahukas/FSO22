@@ -4,6 +4,10 @@ const app = express()
 
 app.use(express.json())
 
+// Otetaan CORS-middleware käyttöön.
+const cors = require('cors')
+app.use(cors())
+
 // Kovakoodatut yhteystiedot.
 let persons = [
     {
