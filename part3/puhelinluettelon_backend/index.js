@@ -1,4 +1,5 @@
 const express = require('express')
+const morgan = require('morgan')
 const app = express()
 
 app.use(express.json())
@@ -27,7 +28,18 @@ let persons = [
       }
 ]
 
+// Luodaan morgan-middlewarelle uusi token, 
+// joka palauttaa requestin bodyn JSON-muodossa.
+morgan.token('requestBody', (request, response) => {
+  return JSON.stringify(request.body)
+})
 
+// Otetaan morgan käyttöön tiny-konfiguraatiolla,
+// lisätään loppuun juuri luotu oma <requestBody>-token.
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :requestBody'))
+
+// Tapahtumankäsittelijä kaikkien palvelimelle 
+// tallennettujen yhteystietojen noutamiseen.
 app.get('/api/persons', (request, response) => {
   response.json(persons)
 })
