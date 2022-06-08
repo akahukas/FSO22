@@ -8,6 +8,9 @@ app.use(express.json())
 const cors = require('cors')
 app.use(cors())
 
+// Lisätään static-middleware.
+app.use(express.static('build'))
+
 // Kovakoodatut yhteystiedot.
 let persons = [
     {
