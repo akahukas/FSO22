@@ -1,6 +1,8 @@
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const app = express()
+const Person = require('./models/person')
 
 app.use(express.json())
 
@@ -48,7 +50,9 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :r
 // Tapahtumankäsittelijä kaikkien palvelimelle 
 // tallennettujen yhteystietojen noutamiseen.
 app.get('/api/persons', (request, response) => {
-  response.json(persons)
+  Person.find({}).then(persons => {
+    response.json(persons)
+  })
 })
 
 // Tapahtumakäsittelijä sivulle, josta nähdään palvelimelle 
@@ -112,18 +116,18 @@ app.post('/api/persons', (request, response) => {
         })
     }
     // Luodaan yhteystieto-olio.
-    const personObject = {
-        id: generateId(),
+    const personObject = new Person({
         name: body.name,
         number: body.number
-    }
-    // Lisätään luotu olio palvelimen tietorakenteeseen 
+    })
+    // Lisätään luotu olio MongoDB-tietokantaan 
     // ja lähetetään se myös vastauksena.
-    persons = persons.concat(personObject)
-    response.json(personObject)
+    personObject.save().then(savedPerson => {
+      response.json(savedPerson)
+    })
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
