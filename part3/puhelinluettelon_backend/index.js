@@ -24,7 +24,7 @@ const { request } = require('express')
 const { response } = require('express')
 app.use(cors())
 
-// Kovakoodatut yhteystiedot.
+/* Kovakoodatut yhteystiedot.
 let persons = [
     {
         id: 1,
@@ -46,7 +46,7 @@ let persons = [
         name: "Mary Poppendick",
         number: "39-23-6423122"
       }
-]
+]*/
 
 // Tapahtumankäsittelijä kaikkien palvelimelle 
 // tallennettujen yhteystietojen noutamiseen.
@@ -89,54 +89,62 @@ app.delete('/api/persons/:id', (request, response, next) => {
 })
 
 // Tapahtumakäsittelijä uuden yhteystiedon tallentamiseksi palvelimelle.
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
     const body = request.body
 
     // Vastataan statuskoodilla ja virheilmoituksella,
     // jos lähetetty yhteystieto ei sisältänyt nimeä.
     if (!body.name) {
-        return response.status(400).json({
-            error: 'Missing contact name.'
-        })
+      return response.status(400).json({
+        error: 'Missing contact name.'
+      })
     }
     // Vastataan statuskoodilla ja virheilmoituksella,
     // jos lähetetty yhteystieto ei sisältänyt puhelinnumeroa.
     else if (!body.number) {
-        return response.status(400).json({
-            error: 'Missing contact telephone number.'
-        })
+      return response.status(400).json({
+        error: 'Missing contact telephone number.'
+      })
+    }
+    // Virheilmoitus, jos yhteystiedon nimeä tai numeroa ei ole määritelty.
+    else if (body.name === undefined || body.number === undefined) {
+      return response.status(400).json({
+        error: 'Missing contact information'
+      })
     }
     // Vastataan statuskoodilla ja virheilmoituksella,
     // jos samalla nimellä varustettu yhteystieto löytyy jo palvelimelta.
     else if (persons.find(person => person.name === body.name)) {
-        return response.status(400).json({
-            error: 'Contact name must be unique.'
-        })
+      return response.status(400).json({
+        error: 'Contact name must be unique.'
+      })
     }
     // Luodaan yhteystieto-olio.
     const personObject = new Person({
-        name: body.name,
-        number: body.number
+      name: body.name,
+      number: body.number
     })
     // Lisätään luotu olio MongoDB-tietokantaan 
     // ja lähetetään se myös vastauksena.
-    personObject.save().then(savedPerson => {
-      response.json(savedPerson)
-    })
+    personObject.save()
+      .then(savedPerson => {
+        response.json(savedPerson)
+      })
+      .catch(error => next(error))
 })
 
 // Tapahtumakäsittelijä jo tietokannassa olevan 
 // yhteystiedon puhelinnumeron muuttamiseksi.
 app.put('/api/persons/:id', (request, response, next) => {
-  const body = request.body
+  const {name, number} = request.body
 
-  const person = {
-    name: body.name,
-    number: body.number
-  }
   // Hyödynnetään findByIdAndUpdate() -metodia
   // juuri oikean yhteystiedon muokkaamiseen.
-  Person.findByIdAndUpdate(request.params.id, person, {new: true})
+  Person.findByIdAndUpdate(
+    request.params.id,
+    {name, number},
+    {new: true, runValidators: true, context: 'query'}
+  )
     .then(modifiedPerson => {
       response.json(modifiedPerson)
     })
@@ -147,8 +155,13 @@ app.put('/api/persons/:id', (request, response, next) => {
 const errorHandler = (error, request, response, next) => {
   console.error(error.message)
 
+  // Vääränmuotoisesta id:stä johtuva virhe.
   if (error.name === 'CastError') {
     return response.status(400).send({error: 'Malformatted id.'})
+  }
+  // Yhteystieto-olion validoinnista johtuva virhe.
+  else if (error.name === 'ValidationError') {
+    return response.status(400).json({error: error.message})
   }
 
   next(error)

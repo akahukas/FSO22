@@ -12,8 +12,24 @@ mongoose.connect(targetUrl)
     })
 
 const personSchema = new mongoose.Schema({
-    name: String,
-    number: String
+    name: {
+        type: String,
+        minlength: 3,
+        required: true
+    },
+    number: {
+        type: String,
+        minlength: 8,
+        validate: {
+            // Kustomoitu Regex -validointi yhteystiedon 
+            // puhelinnumerolle. Sallii alkuun 2-3 numeroa, 
+            // jonka jälkeen väliviiva ja haluttu määrä numeroita.
+            validator: (number) => {
+                return /^\d{2,3}-\d+$/.test(number)
+            }
+        },
+        required: true
+    }
 })
 
 personSchema.set('toJSON', {

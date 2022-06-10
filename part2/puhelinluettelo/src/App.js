@@ -68,17 +68,13 @@ const App = () => {
               setSuccessMessage(null)
             }, 5000)
           })
-
           // Päivityksen epäonnistuessa renderöidään ruudulle ilmoitus
           // epäonnistumisesta ja vain palvelimella olevat yhteystiedot.
           .catch(error => {
-            setErrorMessage(
-              `Contact information of ${foundPerson.name} has already been removed from the server.`
-            )
+            setErrorMessage(error.response.data.error)
             setTimeout(() => {
               setErrorMessage(null)
             }, 5000)
-            setPersons(persons.filter(validPerson => validPerson.id !== foundPerson.id))
           })
       }
 
@@ -97,15 +93,22 @@ const App = () => {
         setPersons(persons.concat(returnedPerson))
         setNewName('')
         setNewNumber('')
-      })
-      
-      // Renderöidään ruudulle onnistumisilmoitus yhteystiedon lisäämisestä.
-      setSuccessMessage(
+        
+        // Renderöidään ruudulle onnistumisilmoitus yhteystiedon lisäämisestä.
+        setSuccessMessage(
         `Added ${personObject.name} to contacts with telephone number ${newNumber}.`
-      )
-      setTimeout(() => {
+        )
+        setTimeout(() => {
         setSuccessMessage(null)
-      }, 5000)
+        }, 5000)
+      })
+      // Virheen sattuessa renderöidään ruudulle 5 sekuntia kestävä virheilmoitus.
+      .catch(error => {
+        setErrorMessage(error.response.data.error)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      })
   }
 
   // Muutoksenkäsittelijät yhteystieto-olion 
