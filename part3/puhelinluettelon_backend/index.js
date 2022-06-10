@@ -8,9 +8,9 @@ app.use(express.static('build'))
 
 app.use(express.json())
 
-// Luodaan morgan-middlewarelle uusi token, 
+// Luodaan morgan-middlewarelle uusi token,
 // joka palauttaa requestin bodyn JSON-muodossa.
-morgan.token('requestBody', (request, response) => {
+morgan.token('requestBody', (request) => {
   return JSON.stringify(request.body)
 })
 
@@ -20,8 +20,6 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :r
 
 // Otetaan CORS-middleware käyttöön.
 const cors = require('cors')
-const { request } = require('express')
-const { response } = require('express')
 app.use(cors())
 
 /* Kovakoodatut yhteystiedot.
@@ -48,7 +46,7 @@ let persons = [
       }
 ]*/
 
-// Tapahtumankäsittelijä kaikkien palvelimelle 
+// Tapahtumankäsittelijä kaikkien palvelimelle
 // tallennettujen yhteystietojen noutamiseen.
 app.get('/api/persons', (request, response) => {
   Person.find({}).then(persons => {
@@ -56,7 +54,7 @@ app.get('/api/persons', (request, response) => {
   })
 })
 
-// Tapahtumakäsittelijä sivulle, josta nähdään palvelimelle 
+// Tapahtumakäsittelijä sivulle, josta nähdään palvelimelle
 // tallennettujen yhteystietojen lukumäärän ja palvelimen määrittämä kellonaika.
 app.get('/info', (request, response) => {
   Person.find({}).then(persons => {
@@ -66,84 +64,77 @@ app.get('/info', (request, response) => {
 
 // Tapahtumakäsittelijä yksittäisen yhteystiedon noutamiseen palvelimelta.
 app.get('/api/persons/:id', (request, response, next) => {
-    Person.findById(request.params.id)
-      .then(person => {
-        // Jos yhteystieto löytyy, palautetaan se <json>-muodossa,
-        // muussa tapauksessa vastataan statuskoodilla "404 Not Found".
-        if (person) {
-          response.json(person)
-        } else {
-          response.status(404).end()
-        }
-      })
-      .catch(error => next(error))
+  Person.findById(request.params.id)
+    .then(person => {
+      // Jos yhteystieto löytyy, palautetaan se <json>-muodossa,
+      // muussa tapauksessa vastataan statuskoodilla "404 Not Found".
+      if (person) {
+        response.json(person)
+      } else {
+        response.status(404).end()
+      }
+    })
+    .catch(error => next(error))
 })
 
 // Tapahtumakäsittelijä yksittäisen yhteystiedon poistamiseen.
 app.delete('/api/persons/:id', (request, response, next) => {
-    Person.findByIdAndRemove(request.params.id)
-      .then(result => {
-        response.status(204).end()
-      })
-      .catch(error => next(error))
+  Person.findByIdAndRemove(request.params.id)
+    .then(() => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
 })
 
 // Tapahtumakäsittelijä uuden yhteystiedon tallentamiseksi palvelimelle.
 app.post('/api/persons', (request, response, next) => {
-    const body = request.body
+  const body = request.body
 
-    // Vastataan statuskoodilla ja virheilmoituksella,
-    // jos lähetetty yhteystieto ei sisältänyt nimeä.
-    if (!body.name) {
-      return response.status(400).json({
-        error: 'Missing contact name.'
-      })
-    }
-    // Vastataan statuskoodilla ja virheilmoituksella,
-    // jos lähetetty yhteystieto ei sisältänyt puhelinnumeroa.
-    else if (!body.number) {
-      return response.status(400).json({
-        error: 'Missing contact telephone number.'
-      })
-    }
-    // Virheilmoitus, jos yhteystiedon nimeä tai numeroa ei ole määritelty.
-    else if (body.name === undefined || body.number === undefined) {
-      return response.status(400).json({
-        error: 'Missing contact information'
-      })
-    }
-    // Vastataan statuskoodilla ja virheilmoituksella,
-    // jos samalla nimellä varustettu yhteystieto löytyy jo palvelimelta.
-    else if (persons.find(person => person.name === body.name)) {
-      return response.status(400).json({
-        error: 'Contact name must be unique.'
-      })
-    }
-    // Luodaan yhteystieto-olio.
-    const personObject = new Person({
-      name: body.name,
-      number: body.number
+  // Vastataan statuskoodilla ja virheilmoituksella,
+  // jos lähetetty yhteystieto ei sisältänyt nimeä.
+  if (!body.name) {
+    return response.status(400).json({
+      error: 'Missing contact name.'
     })
-    // Lisätään luotu olio MongoDB-tietokantaan 
-    // ja lähetetään se myös vastauksena.
-    personObject.save()
-      .then(savedPerson => {
-        response.json(savedPerson)
-      })
-      .catch(error => next(error))
+  }
+  // Vastataan statuskoodilla ja virheilmoituksella,
+  // jos lähetetty yhteystieto ei sisältänyt puhelinnumeroa.
+  else if (!body.number) {
+    return response.status(400).json({
+      error: 'Missing contact telephone number.'
+    })
+  }
+  // Virheilmoitus, jos yhteystiedon nimeä tai numeroa ei ole määritelty.
+  else if (body.name === undefined || body.number === undefined) {
+    return response.status(400).json({
+      error: 'Missing contact information'
+    })
+  }
+  // Luodaan yhteystieto-olio.
+  const personObject = new Person({
+    name: body.name,
+    number: body.number
+  })
+  // Lisätään luotu olio MongoDB-tietokantaan
+  // ja lähetetään se myös vastauksena.
+  personObject.save()
+    .then(savedPerson => {
+      response.json(savedPerson)
+    })
+    .catch(error => next(error))
 })
 
-// Tapahtumakäsittelijä jo tietokannassa olevan 
+// Tapahtumakäsittelijä jo tietokannassa olevan
 // yhteystiedon puhelinnumeron muuttamiseksi.
 app.put('/api/persons/:id', (request, response, next) => {
-  const {name, number} = request.body
+  const { name, number } = request.body
 
   // Hyödynnetään findByIdAndUpdate() -metodia
   // juuri oikean yhteystiedon muokkaamiseen.
   Person.findByIdAndUpdate(
     request.params.id,
-    {name, number},
-    {new: true, runValidators: true, context: 'query'}
+    { name, number },
+    { new: true, runValidators: true, context: 'query' }
   )
     .then(modifiedPerson => {
       response.json(modifiedPerson)
@@ -157,17 +148,17 @@ const errorHandler = (error, request, response, next) => {
 
   // Vääränmuotoisesta id:stä johtuva virhe.
   if (error.name === 'CastError') {
-    return response.status(400).send({error: 'Malformatted id.'})
+    return response.status(400).send({ error: 'Malformatted id.' })
   }
   // Yhteystieto-olion validoinnista johtuva virhe.
   else if (error.name === 'ValidationError') {
-    return response.status(400).json({error: error.message})
+    return response.status(400).json({ error: error.message })
   }
 
   next(error)
 }
 
-// Määritellään virheet käsittelevä 
+// Määritellään virheet käsittelevä
 // middleware viimeisenä käyttöön otettavaksi.
 app.use(errorHandler)
 
