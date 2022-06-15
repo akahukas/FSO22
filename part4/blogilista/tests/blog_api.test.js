@@ -6,83 +6,130 @@ const api = supertest(app)
 
 const Blog = require('../models/blog')
 
-beforeEach(async () => {
-    await Blog.deleteMany({})
-    await Blog.insertMany(helper.initialBlogs)
-})
-
-test('Blogs are returned as JSON.', async () => {
-    await api
-        .get('/api/blogs')
-        .expect(200)
-        .expect('Content-Type', /application\/json/)
-})
-
-test('Correct amount of blogs are returned.', async () => {
-    const response = await api.get('/api/blogs')
-
-    expect(response.body).toHaveLength(helper.initialBlogs.length)
-})
-
-test('Returned blogs have a field named id, not _id.', async () => {
-    const response = await api.get('/api/blogs')
-
-    const returnedBlog = response.body[0]
-    expect(returnedBlog._id).toBeUndefined()
-    expect(returnedBlog.id).toBeDefined()
-})
-
-test('A new valid blog can be added.', async () => {
-    const newBlog = {
-        title: 'Utilizing async/await.',
-        author: 'A Waiter',
-        url: 'https://asynchronizer.com',
-        likes: 123
-    }
-
-    await api
-        .post('/api/blogs')
-        .send(newBlog)
-        .expect(201)
-        .expect('Content-Type', /application\/json/)
-
-    const blogsAtEnd = await helper.blogsInDatabase()
-    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+describe('Saving blogs to database:', () => {
+    beforeEach(async () => {
+        await Blog.deleteMany({})
+        await Blog.insertMany(helper.initialBlogs)
+    })
     
-    const contents = blogsAtEnd.map(blog => blog.title)
-    expect(contents).toContain(newBlog.title)
-})
+    test('Blogs are returned as JSON.', async () => {
+        await api
+            .get('/api/blogs')
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+    })
+    
+    test('Correct amount of blogs are returned.', async () => {
+        const response = await api.get('/api/blogs')
+    
+        expect(response.body).toHaveLength(helper.initialBlogs.length)
+    })
+    
+    test('Returned blogs have a field named id, not _id.', async () => {
+        const response = await api.get('/api/blogs')
+    
+        const returnedBlog = response.body[0]
+        expect(returnedBlog._id).toBeUndefined()
+        expect(returnedBlog.id).toBeDefined()
+    })
+    
+    describe('Posting a new blog:', () => {
+        test('A new valid blog can be added (201).', async () => {
+            const newBlog = {
+                title: 'Utilizing async/await.',
+                author: 'A Waiter',
+                url: 'https://asynchronizer.com',
+                likes: 123
+            }
+        
+            await api
+                .post('/api/blogs')
+                .send(newBlog)
+                .expect(201)
+                .expect('Content-Type', /application\/json/)
+        
+            const blogsAtEnd = await helper.blogsInDatabase()
+            expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+            
+            const contents = blogsAtEnd.map(blog => blog.title)
+            expect(contents).toContain(newBlog.title)
+        })
+        
+        test('If value for likes is not given, its default value is 0 (201).', async () => {
+            const newBlog = {
+                title: 'Who wants likes anyway.',
+                author: 'Like H8r',
+                url: 'https://iwantcomments.com'
+            }
+        
+            await api
+                .post('/api/blogs')
+                .send(newBlog)
+                .expect(201)
+                .expect('Content-Type', /application\/json/)
+        
+            const blogsAtEnd = await helper.blogsInDatabase()
+            const returnedBlog = blogsAtEnd[blogsAtEnd.length - 1]
+        
+            expect(returnedBlog.likes).toBeDefined()
+            expect(returnedBlog.likes).toBe(0)
+        })
+        
+        test('A blog without title and url is not added (400).', async () => {
+            const newBlog = {
+                author: 'Liked Author',
+                likes: 456
+            }
+        
+            await api
+                .post('/api/blogs')
+                .send(newBlog)
+                .expect(400)
+        })
+    })
+    describe('Deleting an existing blog:', () => {
+        test('Success (204) with a valid id.', async () => {
+            const blogsAtStart = await helper.blogsInDatabase()
+            const blogToDelete = blogsAtStart[0]
 
-test('If value for likes is not given, its default value is 0.', async () => {
-    const newBlog = {
-        title: 'Who wants likes anyway.',
-        author: 'Like H8r',
-        url: 'https://iwantcomments.com'
-    }
+            await api
+                .delete(`/api/blogs/${blogToDelete.id}`)
+                .expect(204)
 
-    await api
-        .post('/api/blogs')
-        .send(newBlog)
-        .expect(201)
-        .expect('Content-Type', /application\/json/)
+            const blogsAtEnd = await helper.blogsInDatabase()
+            expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+                
+            const contents = blogsAtEnd.map(blog => blog.title)
+            expect(contents).not.toContain(blogToDelete.title)
+        })
+    })
+    describe('Updating an existing blog:', () => {
+        test('Updates blog successfully (200) in database.', async () => {
+            const blogsAtStart = await helper.blogsInDatabase()
+            const originalBlog = blogsAtStart[0]
+            
+            const modifiedBlog = {
+                title: 'A new updated blog',
+                author: 'New Person',
+                url: 'https://updatedblog.com',
+                likes: 456
+            }
 
-    const blogsAtEnd = await helper.blogsInDatabase()
-    const returnedBlog = blogsAtEnd[blogsAtEnd.length - 1]
+            await api
+                .put(`/api/blogs/${originalBlog.id}`)
+                .send(modifiedBlog)
+                .expect(200)
 
-    expect(returnedBlog.likes).toBeDefined()
-    expect(returnedBlog.likes).toBe(0)
-})
+            const blogsAtEnd = await helper.blogsInDatabase()
+            const updatedBlog = blogsAtEnd[0]
 
-test('A blog without title and url is not added.', async () => {
-    const newBlog = {
-        author: 'Liked Author',
-        likes: 456
-    }
-
-    await api
-        .post('/api/blogs')
-        .send(newBlog)
-        .expect(400)
+            expect(updatedBlog.title).not.toBe(originalBlog.title)
+            expect(updatedBlog.author).not.toBe(originalBlog.author)
+            expect(updatedBlog.url).not.toBe(originalBlog.url)
+            expect(updatedBlog.likes).not.toBe(originalBlog.likes)
+            expect(updatedBlog.id).toBe(originalBlog.id)
+        })
+    })  
 })
 
 afterAll(() => {
