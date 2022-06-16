@@ -1,5 +1,6 @@
 # FSO22
 ***
+## General information:
 #### My task submissions related to [Full Stack Open -course](https://fullstackopen.com/) offered by University of Helsinki.
 
 #### As of Thursday the 16th of June 2022:
@@ -17,4 +18,9 @@
 * Part 11 --> To Be Started.
 * Part 12 --> To Be Started.
 * Part 13 --> To Be Started.
+***
+## (WIP) Certificate:
+#### [In Finnish](https://studies.cs.helsinki.fi/stats/api/certificate/fullstackopen/fi/122092c03b33db3f5819db60d3e5adc4)
+#### [In English](https://studies.cs.helsinki.fi/stats/api/certificate/fullstackopen/en/122092c03b33db3f5819db60d3e5adc4)
+![Certificate in English](https://studies.cs.helsinki.fi/stats/api/certificate/fullstackopen/en/122092c03b33db3f5819db60d3e5adc4)
 ***
