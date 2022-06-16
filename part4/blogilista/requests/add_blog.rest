@@ -1,10 +1,10 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RVc2VybmFtZSIsImlkIjoiNjJhOWZlN2RlOTRlYTcyOGRiZjVkOWEwIiwiaWF0IjoxNjU1Mzc3Nzk2fQ.1NVgDEEKStG80xU4ALMiWts2MAQIQzYj5xvP9Kb3RCY
 
 {
-  "title": "The Ultimate Blog of Everything",
-  "author": "Whose Bro",
-  "user": "62a9fe7de94ea728dbf5d9a0",
-  "url": "https://whosebro.com/ultimate",
-  "likes": 0
+  "title": "I have a valid token!",
+  "author": "Test Valid Person",
+  "url": "https://testblog.com/valid",
+  "likes": 1234
 }
