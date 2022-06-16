@@ -4,6 +4,7 @@ Content-Type: application/json
 {
   "title": "The Ultimate Blog of Everything",
   "author": "Whose Bro",
+  "user": "62a9fe7de94ea728dbf5d9a0",
   "url": "https://whosebro.com/ultimate",
   "likes": 0
 }
