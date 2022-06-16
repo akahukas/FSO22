@@ -5,9 +5,23 @@ const app = require('../app')
 const api = supertest(app)
 
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 describe('Saving blogs to database:', () => {
     beforeEach(async () => {
+        await User.deleteMany({})
+
+        const testerLogin = {
+            name: 'Mr. Tester',
+            username: 'mrtester',
+            password: 'testerpassword'
+        }
+
+        await api
+            .post('/api/users')
+            .send(testerLogin)
+            .expect('Content-Type', /application\/json/)
+        
         await Blog.deleteMany({})
         await Blog.insertMany(helper.initialBlogs)
     })
@@ -35,15 +49,26 @@ describe('Saving blogs to database:', () => {
     
     describe('Posting a new blog:', () => {
         test('A new valid blog can be added (201).', async () => {
+            const loginInfo = {
+                username: 'mrtester',
+                password: 'testerpassword'
+            }
+
+            const loggedTester = await api
+                .post('/api/login')
+                .send(loginInfo)
+                .expect('Content-Type', /application\/json/)
+            
             const newBlog = {
                 title: 'Utilizing async/await.',
                 author: 'A Waiter',
                 url: 'https://asynchronizer.com',
                 likes: 123
             }
-        
+
             await api
                 .post('/api/blogs')
+                .set('Authorization', `bearer ${loggedTester.body.token}`)
                 .send(newBlog)
                 .expect(201)
                 .expect('Content-Type', /application\/json/)
@@ -56,6 +81,16 @@ describe('Saving blogs to database:', () => {
         })
         
         test('If value for likes is not given, its default value is 0 (201).', async () => {
+            const loginInfo = {
+                username: 'mrtester',
+                password: 'testerpassword'
+            }
+
+            const loggedTester = await api
+                .post('/api/login')
+                .send(loginInfo)
+                .expect('Content-Type', /application\/json/)
+            
             const newBlog = {
                 title: 'Who wants likes anyway.',
                 author: 'Like H8r',
@@ -64,6 +99,7 @@ describe('Saving blogs to database:', () => {
         
             await api
                 .post('/api/blogs')
+                .set('Authorization', `bearer ${loggedTester.body.token}`)
                 .send(newBlog)
                 .expect(201)
                 .expect('Content-Type', /application\/json/)
@@ -76,6 +112,16 @@ describe('Saving blogs to database:', () => {
         })
         
         test('A blog without title and url is not added (400).', async () => {
+            const loginInfo = {
+                username: 'mrtester',
+                password: 'testerpassword'
+            }
+
+            const loggedTester = await api
+                .post('/api/login')
+                .send(loginInfo)
+                .expect('Content-Type', /application\/json/)
+            
             const newBlog = {
                 author: 'Liked Author',
                 likes: 456
@@ -83,17 +129,59 @@ describe('Saving blogs to database:', () => {
         
             await api
                 .post('/api/blogs')
+                .set('Authorization', `bearer ${loggedTester.body.token}`)
                 .send(newBlog)
                 .expect(400)
+        })
+
+        test('Not allowed without setting a token (401).', async () => {
+            const loginInfo = {
+                username: 'mrtester',
+                password: 'testerpassword'
+            }
+
+            const loggedTester = await api
+                .post('/api/login')
+                .send(loginInfo)
+                .expect('Content-Type', /application\/json/)
+            
+            const unsavedBlog = {
+                title: 'I want to be saved to database.',
+                author: 'Sam Saver',
+                url: 'https://allowsave.com/initial',
+                likes: 123
+            }
+
+            await api
+                .post('/api/blogs')
+                .send(unsavedBlog)
+                .expect(401)
+
+            const blogsAtEnd = await helper.blogsInDatabase()
+            expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+                
+            const contents = blogsAtEnd.map(blog => blog.title)
+            expect(contents).not.toContain(unsavedBlog.title)
         })
     })
     describe('Deleting an existing blog:', () => {
         test('Success (204) with a valid id.', async () => {
+            const loginInfo = {
+                username: 'mrtester',
+                password: 'testerpassword'
+            }
+
+            const loggedTester = await api
+                .post('/api/login')
+                .send(loginInfo)
+                .expect('Content-Type', /application\/json/)
+
             const blogsAtStart = await helper.blogsInDatabase()
             const blogToDelete = blogsAtStart[0]
 
             await api
                 .delete(`/api/blogs/${blogToDelete.id}`)
+                .set('Authorization', `bearer ${loggedTester.body.token}`)
                 .expect(204)
 
             const blogsAtEnd = await helper.blogsInDatabase()
