@@ -22,11 +22,13 @@ const initialBlogs = [
     },
 ]
 
+// Palauttaa tietokantaan tallennetut blogit.
 const blogsInDatabase = async () => {
     const blogs = await Blog.find({})
     return blogs.map(blog => blog.toJSON())
 }
 
+// Palauttaa tietokantaan tallennetut käyttäjät.
 const usersInDatabase = async () => {
     const users = await User.find({})
     return users.map(user => user.toJSON())

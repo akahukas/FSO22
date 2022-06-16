@@ -24,6 +24,7 @@ userSchema.set('toJSON', {
     returnedUser.id = returnedUser._id.toString()
     delete returnedUser._id
     delete returnedUser.__v
+    // HUOM! Poistetaan salattu salasana.
     delete returnedUser.passwordHash
     }
 })
