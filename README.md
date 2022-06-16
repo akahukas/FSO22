@@ -22,5 +22,5 @@
 ## (WIP) Certificate:
 #### [In Finnish](https://studies.cs.helsinki.fi/stats/api/certificate/fullstackopen/fi/122092c03b33db3f5819db60d3e5adc4)
 #### [In English](https://studies.cs.helsinki.fi/stats/api/certificate/fullstackopen/en/122092c03b33db3f5819db60d3e5adc4)
-![Certificate in English](https://studies.cs.helsinki.fi/stats/api/certificate/fullstackopen/en/122092c03b33db3f5819db60d3e5adc4)
+![Certificate in English](./certificate-fullstack-en.png)
 ***
