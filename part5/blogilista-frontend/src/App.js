@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
-import login from './services/login'
 import loginService from './services/login'
 
 const App = () => {
@@ -16,6 +15,15 @@ const App = () => {
     )  
   }, [])
 
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
+
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+    }
+  }, [])
+
   const handleLogin = async (event) => {
     event.preventDefault()
 
@@ -23,12 +31,25 @@ const App = () => {
       const user = await loginService.login({
         username, password
       })
+
+      window.localStorage.setItem(
+        'loggedBlogAppUser', JSON.stringify(user)
+      )
       setUser(user)
       setUsername('')
       setPassword('')
     }
     catch (exception) {
       console.log('Wrong username or password')
+    }
+  }
+
+  const handleLogout = (event) => {
+    try {
+      window.localStorage.removeItem('loggedBlogAppUser')
+    }
+    catch (exception) {
+      console.log('An error occurred while trying to log out.')
     }
   }
 
@@ -59,15 +80,21 @@ const App = () => {
     </div>
   )
 
-  const bloglistElement = () => (
-    <div>
+  const bloglistElement = () => {
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
+    const name = JSON.parse(loggedUserJSON).name
+    
+    return <div>
+      <p>Logged in as {name}</p>
+      <button onClick={handleLogout}>logout</button>
+
       <h2>Blogs in database:</h2>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
     </div>
-  )
-
+  }
+  
   return (
     <div>
       <h1>Blogs-application</h1>
@@ -76,7 +103,7 @@ const App = () => {
         ? loginForm()
         : bloglistElement()
       }
-      
+
     </div>
   )
 }
