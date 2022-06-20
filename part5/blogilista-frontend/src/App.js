@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -6,17 +6,19 @@ import loginService from './services/login'
 import SuccessNotification from './components/SuccessNotification'
 import ErrorNotification from './components/ErrorNotification'
 
+import Togglable from './components/Togglable'
+import BlogForm from './components/BlogForm'
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
 
   const [successMessage, setSuccessMessage] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
+
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -34,23 +36,12 @@ const App = () => {
     }
   }, [])
 
-  const addBlog = (event) => {
-    event.preventDefault()
-
-    const blogObject = {
-      title: title,
-      author: author,
-      user: user._id,
-      url: url
-    }
-
+  const addBlog = (blogObject) => {
+    blogFormRef.current.toggleVisibility()
     blogService
       .createNew(blogObject)
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
-        setTitle('')
-        setAuthor('')
-        setUrl('')
       })
 
     setSuccessMessage(`Added a new blog ${blogObject.title} by ${blogObject.author}.`)
@@ -104,7 +95,7 @@ const App = () => {
       <h2>Log in to application:</h2>
       <form onSubmit={handleLogin}>
         <div>
-          username
+          Username
             <input
             type='text'
             value={username}
@@ -113,7 +104,7 @@ const App = () => {
             />
         </div>
         <div>
-          password
+          Password
             <input
             type='password'
             value={password}
@@ -121,61 +112,33 @@ const App = () => {
             onChange={({ target }) => setPassword(target.value)}
             />
         </div>
-        <button type='submit'>login</button>
+        <button type='submit'>Login</button>
       </form>
     </div>
   )
-
-  const bloglistElement = () => {
+  
+  const loggedInElement = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
     const name = JSON.parse(loggedUserJSON).name
-    
+
     return <div>
       <p>Logged in as {name}</p>
-      <button onClick={handleLogout}>logout</button>
-
-      {blogForm()}
-
-      <h2>Blogs in database:</h2>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
+      <button onClick={handleLogout}>Logout</button>
     </div>
   }
 
   const blogForm = () => (
+    <Togglable buttonLabel='Create new blog' ref={blogFormRef}>
+      <BlogForm createBlog={addBlog} />
+    </Togglable>
+  )
+
+  const bloglistElement = () => (
     <div>
-      <h2>Create new blog:</h2>
-      <form onSubmit={addBlog}>
-        <div>
-          Title:
-            <input
-            type='text'
-            value={title}
-            name='Title'
-            onChange={({ target }) => setTitle(target.value)}
-            />
-        </div>
-        <div>
-          Author:
-            <input
-            type='text'
-            value={author}
-            name='Author'
-            onChange={({ target }) => setAuthor(target.value)}
-            />
-        </div>
-        <div>
-          Url:
-            <input
-            type='url'
-            value={url}
-            name='Url'
-            onChange={({ target }) => setUrl(target.value)}
-            />
-        </div>
-        <button type='submit'>create</button>
-      </form>
+      <h2>Blogs in database:</h2>
+      {blogs.map(blog =>
+        <Blog key={blog.id} blog={blog} />
+      )}
     </div>
   )
 
@@ -185,10 +148,14 @@ const App = () => {
       <SuccessNotification message={successMessage} />
       <ErrorNotification message={errorMessage} />
 
-      {user === null
-        ? loginForm()
-        : bloglistElement()
-      }
+      {user === null && loginForm()}
+      {user !== null && loggedInElement()}
+      {user !== null && blogForm()}
+      {user !== null && bloglistElement()}
+      
+      
+
+      
 
     </div>
   )
