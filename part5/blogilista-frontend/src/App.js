@@ -50,6 +50,19 @@ const App = () => {
     }, 5000)
   }
 
+  const addLike = async (id, blogObject) => {
+
+    await blogService.updateOld(id, blogObject)
+
+    const response = await blogService.getAll()
+    setBlogs(response)
+
+    setSuccessMessage(`Added a like to blog ${blogObject.title} by ${blogObject.author}.`)
+    setTimeout(() => {
+      setSuccessMessage(null)
+    }, 5000)
+  }
+
   const handleLogin = async (event) => {
     event.preventDefault()
 
@@ -137,7 +150,7 @@ const App = () => {
     <div>
       <h2>Blogs in database:</h2>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} handleLike={addLike} />
       )}
     </div>
   )
