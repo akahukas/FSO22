@@ -1,12 +1,22 @@
 import { useState } from 'react'
 
-const Blog = ({ blog, handleLike }) => {
+const Blog = ({ blog, handleLike , checkCorrectUser, remove}) => {
   const [minimized, setMinimized] = useState(true)
+  const [removeVisible, setRemoveVisible] = useState(false)
 
   const hideWhenMinimized = { display: minimized ? 'none' : ''}
 
+  const showWhenCorrectUser = { display: removeVisible ? '' : 'none' }
+
   const toggleSize = () => {
     setMinimized(!minimized)
+
+    if (checkCorrectUser(blog.id)) {
+      setRemoveVisible(true)
+    }
+    else {
+      setRemoveVisible(false)
+    }
   }
 
   const blogStyle = {
@@ -14,6 +24,10 @@ const Blog = ({ blog, handleLike }) => {
     borderWidth: 1,
     padding: 10,
     margin: 5,
+  }
+
+  const buttonStyle= {
+    backgroundColor: 'Crimson'
   }
 
   const addLike = () => {
@@ -38,8 +52,10 @@ const Blog = ({ blog, handleLike }) => {
       <p>{blog.url}</p>
       likes {blog.likes} <button onClick={addLike}>like</button>
       <p>{blog.user.name}</p>
+      <div style={showWhenCorrectUser}>
+        <button style={buttonStyle} onClick={() => remove(blog.id)}>Remove</button>
+      </div>
     </div>
-    
   </div>  
 )}
 

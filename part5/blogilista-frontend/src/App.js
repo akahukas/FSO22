@@ -68,6 +68,35 @@ const App = () => {
     }, 5000)
   }
 
+  const isBlogCreatedByLoggedUser = (blogId) => {
+    const currentBlog = blogs.find(({ id }) => id === blogId)
+
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
+    const loggedUser = JSON.parse(loggedUserJSON)
+
+    if (currentBlog.user.username === loggedUser.username) {
+      return true
+    }
+    return false
+  }
+
+  const removeBlog = async (blogId) => {
+    const blog = blogs.find(({ id }) => id === blogId)
+    
+    const confirmMessage = `Remove blog ${blog.title} by ${blog.author}?`
+
+    if (window.confirm(confirmMessage)) {
+      await blogService.remove(blogId)
+
+      renderBlogs()
+
+      setSuccessMessage(`Blog ${blog.title} by ${blog.author} removed successfully.`)
+      setTimeout(() => {
+      setSuccessMessage(null)
+    }, 5000)
+    }
+  } 
+
   const handleLogin = async (event) => {
     event.preventDefault()
 
@@ -155,7 +184,9 @@ const App = () => {
     <div>
       <h2>Blogs in database:</h2>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} handleLike={addLike} />
+        <Blog key={blog.id} blog={blog} handleLike={addLike} 
+              checkCorrectUser={isBlogCreatedByLoggedUser} remove={removeBlog}
+        />
       )}
     </div>
   )
