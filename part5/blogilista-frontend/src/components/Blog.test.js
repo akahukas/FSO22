@@ -1,6 +1,7 @@
 import React from 'react'
 import '@testing-library/jest-dom/extend-expect'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 
 const testBlog = {
@@ -12,6 +13,10 @@ const testBlog = {
   },
   url: 'https://blogtester.com/testing',
   likes: 123
+}
+
+const styleVisible = {
+  display: 'block'
 }
 
 const styleNotVisible = {
@@ -34,4 +39,22 @@ test('By default, renders title & author, not URL & amount of likes.', () => {
   expect(urlAndLikesDiv).toHaveTextContent('https://blogtester.com/testing')
   expect(urlAndLikesDiv).toHaveTextContent(123)
   expect(urlAndLikesDiv).toHaveStyle(styleNotVisible)
+})
+
+test('URL & amount of likes rendered after <view>-button click.', async () => {
+  const mockHandleLike = jest.fn()
+  const mockCheckCorrectUser = jest.fn()
+  const mockRemove = jest.fn()
+
+  const { container } = render(<Blog blog={testBlog} handleLike={mockHandleLike}
+    checkCorrectUser={mockCheckCorrectUser} remove={mockRemove}/>)
+
+  const user = userEvent.setup()
+  const viewButton = screen.getByText('view')
+  await user.click(viewButton)
+
+  const urlAndLikesDiv = container.querySelector('.urlAndLikes')
+  expect(urlAndLikesDiv).toHaveTextContent('https://blogtester.com/testing')
+  expect(urlAndLikesDiv).toHaveTextContent(123)
+  expect(urlAndLikesDiv).toHaveStyle(styleVisible)
 })
