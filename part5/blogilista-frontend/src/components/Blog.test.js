@@ -4,76 +4,78 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 
-const testBlog = {
-  title: 'Testing blog.',
-  author: 'Mr. Blogtester',
-  user: {
-    name: 'Mr. Blogtester',
-    username: 'blogtester'
-  },
-  url: 'https://blogtester.com/testing',
-  likes: 123
-}
+describe('Testing <Blog />:', () => {
+  const testBlog = {
+    title: 'Testing blog.',
+    author: 'Mr. Blogtester',
+    user: {
+      name: 'Mr. Blogtester',
+      username: 'blogtester'
+    },
+    url: 'https://blogtester.com/testing',
+    likes: 123
+  }
 
-const styleVisible = {
-  display: 'block'
-}
+  const styleVisible = {
+    display: 'block'
+  }
 
-const styleNotVisible = {
-  display: 'none'
-}
+  const styleNotVisible = {
+    display: 'none'
+  }
 
-test('By default, renders title & author, not URL & amount of likes.', () => {
-  const mockHandleLike = jest.fn()
-  const mockCheckCorrectUser = jest.fn()
-  const mockRemove = jest.fn()
+  test('By default, renders title & author, not URL & amount of likes.', () => {
+    const mockHandleLike = jest.fn()
+    const mockCheckCorrectUser = jest.fn()
+    const mockRemove = jest.fn()
 
-  const { container } = render(<Blog blog={testBlog} handleLike={mockHandleLike}
-    checkCorrectUser={mockCheckCorrectUser} remove={mockRemove}/>)
+    const { container } = render(<Blog blog={testBlog} handleLike={mockHandleLike}
+      checkCorrectUser={mockCheckCorrectUser} remove={mockRemove}/>)
 
-  const titleAndAuthorDiv = container.querySelector('.titleAndAuthor')
-  expect(titleAndAuthorDiv).toHaveTextContent('Testing blog.')
-  expect(titleAndAuthorDiv).toHaveTextContent('Mr. Blogtester')
+    const titleAndAuthorDiv = container.querySelector('.titleAndAuthor')
+    expect(titleAndAuthorDiv).toHaveTextContent('Testing blog.')
+    expect(titleAndAuthorDiv).toHaveTextContent('Mr. Blogtester')
 
-  const urlAndLikesDiv = container.querySelector('.urlAndLikes')
-  expect(urlAndLikesDiv).toHaveTextContent('https://blogtester.com/testing')
-  expect(urlAndLikesDiv).toHaveTextContent(123)
-  expect(urlAndLikesDiv).toHaveStyle(styleNotVisible)
-})
+    const urlAndLikesDiv = container.querySelector('.urlAndLikes')
+    expect(urlAndLikesDiv).toHaveTextContent('https://blogtester.com/testing')
+    expect(urlAndLikesDiv).toHaveTextContent(123)
+    expect(urlAndLikesDiv).toHaveStyle(styleNotVisible)
+  })
 
-test('URL & amount of likes rendered after <view>-button click.', async () => {
-  const mockHandleLike = jest.fn()
-  const mockCheckCorrectUser = jest.fn()
-  const mockRemove = jest.fn()
+  test('URL & amount of likes rendered after <view>-button click.', async () => {
+    const mockHandleLike = jest.fn()
+    const mockCheckCorrectUser = jest.fn()
+    const mockRemove = jest.fn()
 
-  const { container } = render(<Blog blog={testBlog} handleLike={mockHandleLike}
-    checkCorrectUser={mockCheckCorrectUser} remove={mockRemove}/>)
+    const { container } = render(<Blog blog={testBlog} handleLike={mockHandleLike}
+      checkCorrectUser={mockCheckCorrectUser} remove={mockRemove}/>)
 
-  const user = userEvent.setup()
-  const viewButton = screen.getByText('view')
-  await user.click(viewButton)
+    const user = userEvent.setup()
+    const viewButton = screen.getByText('view')
+    await user.click(viewButton)
 
-  const urlAndLikesDiv = container.querySelector('.urlAndLikes')
-  expect(urlAndLikesDiv).toHaveTextContent('https://blogtester.com/testing')
-  expect(urlAndLikesDiv).toHaveTextContent(123)
-  expect(urlAndLikesDiv).toHaveStyle(styleVisible)
-})
+    const urlAndLikesDiv = container.querySelector('.urlAndLikes')
+    expect(urlAndLikesDiv).toHaveTextContent('https://blogtester.com/testing')
+    expect(urlAndLikesDiv).toHaveTextContent(123)
+    expect(urlAndLikesDiv).toHaveStyle(styleVisible)
+  })
 
-test('Clicking <like>-button twice causes eventhandler to be called twice as well.', async () => {
-  const mockHandleLike = jest.fn()
-  const mockCheckCorrectUser = jest.fn()
-  const mockRemove = jest.fn()
+  test('Clicking <like>-button twice causes eventhandler to be called twice as well.', async () => {
+    const mockHandleLike = jest.fn()
+    const mockCheckCorrectUser = jest.fn()
+    const mockRemove = jest.fn()
 
-  render(<Blog blog={testBlog} handleLike={mockHandleLike}
-    checkCorrectUser={mockCheckCorrectUser} remove={mockRemove}/>)
+    render(<Blog blog={testBlog} handleLike={mockHandleLike}
+      checkCorrectUser={mockCheckCorrectUser} remove={mockRemove}/>)
 
-  const user = userEvent.setup()
-  const viewButton = screen.getByText('view')
-  await user.click(viewButton)
+    const user = userEvent.setup()
+    const viewButton = screen.getByText('view')
+    await user.click(viewButton)
 
-  const likeButton = screen.getByText('like')
-  await user.click(likeButton)
-  await user.click(likeButton)
+    const likeButton = screen.getByText('like')
+    await user.click(likeButton)
+    await user.click(likeButton)
 
-  expect(mockHandleLike.mock.calls).toHaveLength(2)
+    expect(mockHandleLike.mock.calls).toHaveLength(2)
+  })
 })
