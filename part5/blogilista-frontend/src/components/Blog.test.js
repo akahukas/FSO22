@@ -58,3 +58,22 @@ test('URL & amount of likes rendered after <view>-button click.', async () => {
   expect(urlAndLikesDiv).toHaveTextContent(123)
   expect(urlAndLikesDiv).toHaveStyle(styleVisible)
 })
+
+test('Clicking <like>-button twice causes eventhandler to be called twice as well.', async () => {
+  const mockHandleLike = jest.fn()
+  const mockCheckCorrectUser = jest.fn()
+  const mockRemove = jest.fn()
+
+  render(<Blog blog={testBlog} handleLike={mockHandleLike}
+    checkCorrectUser={mockCheckCorrectUser} remove={mockRemove}/>)
+
+  const user = userEvent.setup()
+  const viewButton = screen.getByText('view')
+  await user.click(viewButton)
+
+  const likeButton = screen.getByText('like')
+  await user.click(likeButton)
+  await user.click(likeButton)
+
+  expect(mockHandleLike.mock.calls).toHaveLength(2)
+})
