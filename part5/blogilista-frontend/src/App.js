@@ -8,6 +8,7 @@ import ErrorNotification from './components/ErrorNotification'
 
 import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
+import LoginForm from './components/LoginForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -138,30 +139,9 @@ const App = () => {
   }
 
   const loginForm = () => (
-    <div>
-      <h2>Log in to application:</h2>
-      <form onSubmit={handleLogin}>
-        <div>
-          Username
-            <input
-            type='text'
-            value={username}
-            name='Username'
-            onChange={({ target }) => setUsername(target.value)}
-            />
-        </div>
-        <div>
-          Password
-            <input
-            type='password'
-            value={password}
-            name='Password'
-            onChange={({ target }) => setPassword(target.value)}
-            />
-        </div>
-        <button type='submit'>Login</button>
-      </form>
-    </div>
+    <LoginForm handleSubmit={handleLogin} username={username}
+                setUsername={setUsername} password={password} setPassword={setPassword}
+    />
   )
   
   const loggedInElement = () => {
@@ -169,7 +149,7 @@ const App = () => {
     const name = JSON.parse(loggedUserJSON).name
 
     return <div>
-      <p>Logged in as {name}</p>
+      <p>Logged in as {name}.</p>
       <button onClick={handleLogout}>Logout</button>
     </div>
   }
@@ -201,10 +181,6 @@ const App = () => {
       {user !== null && loggedInElement()}
       {user !== null && blogForm()}
       {user !== null && bloglistElement()}
-      
-      
-
-      
 
     </div>
   )

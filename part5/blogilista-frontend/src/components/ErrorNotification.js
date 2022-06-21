@@ -8,6 +8,6 @@ const ErrorNotification = ({message}) => {
         {message}
       </div>
     )
-  }
+}
 
 export default ErrorNotification

@@ -8,6 +8,6 @@ const SuccessNotification = ({message}) => {
         {message}
       </div>
     )
-  }
+}
 
 export default SuccessNotification
