@@ -21,9 +21,7 @@ const App = () => {
   const blogFormRef = useRef()
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
+    renderBlogs()  
   }, [])
 
   useEffect(() => {
@@ -36,6 +34,12 @@ const App = () => {
     }
   }, [])
 
+  const renderBlogs = async () => {
+    const response = await blogService.getAll()
+
+    setBlogs(response.sort((blog1, blog2) => blog2.likes - blog1.likes))
+  }
+
   const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility()
     blogService
@@ -43,6 +47,8 @@ const App = () => {
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
       })
+
+    renderBlogs()
 
     setSuccessMessage(`Added a new blog ${blogObject.title} by ${blogObject.author}.`)
     setTimeout(() => {
@@ -54,8 +60,7 @@ const App = () => {
 
     await blogService.updateOld(id, blogObject)
 
-    const response = await blogService.getAll()
-    setBlogs(response)
+    renderBlogs()
 
     setSuccessMessage(`Added a like to blog ${blogObject.title} by ${blogObject.author}.`)
     setTimeout(() => {
