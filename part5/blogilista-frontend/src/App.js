@@ -22,7 +22,7 @@ const App = () => {
   const blogFormRef = useRef()
 
   useEffect(() => {
-    renderBlogs()  
+    renderBlogs()
   }, [])
 
   useEffect(() => {
@@ -83,7 +83,7 @@ const App = () => {
 
   const removeBlog = async (blogId) => {
     const blog = blogs.find(({ id }) => id === blogId)
-    
+
     const confirmMessage = `Remove blog ${blog.title} by ${blog.author}?`
 
     if (window.confirm(confirmMessage)) {
@@ -93,10 +93,10 @@ const App = () => {
 
       setSuccessMessage(`Blog ${blog.title} by ${blog.author} removed successfully.`)
       setTimeout(() => {
-      setSuccessMessage(null)
-    }, 5000)
+        setSuccessMessage(null)
+      }, 5000)
     }
-  } 
+  }
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -140,10 +140,10 @@ const App = () => {
 
   const loginForm = () => (
     <LoginForm handleSubmit={handleLogin} username={username}
-                setUsername={setUsername} password={password} setPassword={setPassword}
+      setUsername={setUsername} password={password} setPassword={setPassword}
     />
   )
-  
+
   const loggedInElement = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
     const name = JSON.parse(loggedUserJSON).name
@@ -164,8 +164,8 @@ const App = () => {
     <div>
       <h2>Blogs in database:</h2>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} handleLike={addLike} 
-              checkCorrectUser={isBlogCreatedByLoggedUser} remove={removeBlog}
+        <Blog key={blog.id} blog={blog} handleLike={addLike}
+          checkCorrectUser={isBlogCreatedByLoggedUser} remove={removeBlog}
         />
       )}
     </div>

@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
 
-const Blog = ({ blog, handleLike , checkCorrectUser, remove}) => {
+const Blog = ({ blog, handleLike , checkCorrectUser, remove }) => {
   const [minimized, setMinimized] = useState(true)
   const [removeVisible, setRemoveVisible] = useState(false)
 
-  const hideWhenMinimized = { display: minimized ? 'none' : ''}
+  const hideWhenMinimized = { display: minimized ? 'none' : '' }
 
   const showWhenCorrectUser = { display: removeVisible ? '' : 'none' }
 
@@ -45,20 +45,20 @@ const Blog = ({ blog, handleLike , checkCorrectUser, remove}) => {
   }
 
   return (
-  <div style={blogStyle}>
-    <div>
-      {blog.title} {blog.author} <button onClick={toggleSize}>{minimized ? 'view' : 'hide'}</button>
-    </div>
-    <div style={hideWhenMinimized}>
-      <p>{blog.url}</p>
-      likes {blog.likes} <button onClick={addLike}>like</button>
-      <p>{blog.user.name}</p>
-      <div style={showWhenCorrectUser}>
-        <button style={buttonStyle} onClick={() => remove(blog.id)}>Remove</button>
+    <div style={blogStyle}>
+      <div>
+        {blog.title} {blog.author} <button onClick={toggleSize}>{minimized ? 'view' : 'hide'}</button>
+      </div>
+      <div style={hideWhenMinimized}>
+        <p>{blog.url}</p>
+        likes {blog.likes} <button onClick={addLike}>like</button>
+        <p>{blog.user.name}</p>
+        <div style={showWhenCorrectUser}>
+          <button style={buttonStyle} onClick={() => remove(blog.id)}>Remove</button>
+        </div>
       </div>
     </div>
-  </div>  
-)}
+  )}
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
