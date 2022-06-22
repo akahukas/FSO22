@@ -53,5 +53,28 @@ describe('Blog app', function () {
       )
       cy.get('.successNotification').should('have.css', 'color', 'rgb(0, 128, 0)')
     })
+
+    afterEach(function() {
+      cy.get('#logoutButton').click()
+    })
+  })
+
+  describe('and blogs exist', function() {
+    beforeEach(function() {
+      cy.login({ username: 'e2etester', password: 'securePassword' })
+      cy.createBlog({
+        title: 'Another Cypress Blog.',
+        author: 'Mr. Cypress',
+        url: 'http://mrcypress.com/another'
+      })
+    })
+    it('a like can be added to one of the blogs.', function() {
+
+      cy.contains('Another Cypress Blog.').get('#viewButton').click()
+
+      cy.get('#likes').contains(0)
+      cy.get('#likeButton').click()
+      cy.get('#likes').contains(1)
+    })
   })
 })

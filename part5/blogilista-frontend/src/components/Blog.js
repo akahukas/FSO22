@@ -47,15 +47,17 @@ const Blog = ({ blog, handleLike , checkCorrectUser, remove }) => {
   return (
     <div style={blogStyle}>
       <div className='titleAndAuthor'>
-        {blog.title} {blog.author} <button onClick={toggleSize}>{minimized ? 'view' : 'hide'}</button>
+        {blog.title} {blog.author} <button id='viewButton' onClick={toggleSize}>{minimized ? 'view' : 'hide'}</button>
       </div>
       <div style={hideWhenMinimized} className='urlAndLikes'>
         <p>
           {blog.url}
         </p>
-        <p>
+        <p id='likes'>
           likes {blog.likes}
-          <button onClick={addLike}>like</button>
+          <button id='likeButton' onClick={addLike}>
+            like
+          </button>
         </p>
         <p>{blog.user.name}</p>
         <div style={showWhenCorrectUser}>
