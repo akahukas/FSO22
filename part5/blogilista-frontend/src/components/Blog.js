@@ -61,7 +61,9 @@ const Blog = ({ blog, handleLike , checkCorrectUser, remove }) => {
         </p>
         <p>{blog.user.name}</p>
         <div style={showWhenCorrectUser}>
-          <button style={buttonStyle} onClick={() => remove(blog.id)}>Remove</button>
+          <button id='removeButton' style={buttonStyle} onClick={() => remove(blog.id)}>
+            Remove
+          </button>
         </div>
       </div>
     </div>

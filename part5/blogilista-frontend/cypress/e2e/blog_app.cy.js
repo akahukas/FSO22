@@ -6,7 +6,13 @@ describe('Blog app', function () {
       username: 'e2etester',
       password: 'securePassword'
     }
+    const anotherUser = {
+      name: 'E2E Helper',
+      username: 'e2ehelper',
+      password: 'alsoSecurePassword'
+    }
     cy.request('POST', 'http://localhost:3003/api/users', user)
+    cy.request('POST', 'http://localhost:3003/api/users', anotherUser)
     cy.visit('http://localhost:3000')
   })
 
@@ -68,6 +74,7 @@ describe('Blog app', function () {
         url: 'http://mrcypress.com/another'
       })
     })
+
     it('a like can be added to one of the blogs.', function() {
 
       cy.contains('Another Cypress Blog.').get('#viewButton').click()
@@ -75,6 +82,24 @@ describe('Blog app', function () {
       cy.get('#likes').contains(0)
       cy.get('#likeButton').click()
       cy.get('#likes').contains(1)
+    })
+
+    it('a blog can be deleted by logged in user.', function() {
+      cy.get('#blogList').contains('Another Cypress Blog.')
+      cy.contains('Another Cypress Blog.').get('#viewButton').click()
+
+      cy.get('#removeButton').click()
+      cy.get('.titleAndAuthor').should('not.exist')
+    })
+
+    it('a blog can not be deleted by user who did not create the blog', function() {
+      cy.get('#logoutButton').click()
+      cy.visit('http://localhost:3000')
+      cy.login({ username: 'e2ehelper', password: 'alsoSecurePassword' })
+
+      cy.get('#blogList').contains('Another Cypress Blog.')
+      cy.contains('Another Cypress Blog.').get('#viewButton').click()
+      cy.get('#removeButton').should('not.be.visible')
     })
   })
 })
