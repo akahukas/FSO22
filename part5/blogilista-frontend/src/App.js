@@ -46,6 +46,7 @@ const App = () => {
     blogService
       .createNew(blogObject)
       .then(returnedBlog => {
+        renderBlogs()
         setBlogs(blogs.concat(returnedBlog))
       })
 
