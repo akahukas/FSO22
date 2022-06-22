@@ -45,9 +45,10 @@ const Blog = ({ blog, handleLike , checkCorrectUser, remove }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div className='blog' style={blogStyle}>
       <div className='titleAndAuthor'>
-        {blog.title} {blog.author} <button id='viewButton' onClick={toggleSize}>{minimized ? 'view' : 'hide'}</button>
+        <span>{blog.title} {blog.author} </span>
+        <button id='viewButton' onClick={toggleSize}>{minimized ? 'view' : 'hide'}</button>
       </div>
       <div style={hideWhenMinimized} className='urlAndLikes'>
         <p>

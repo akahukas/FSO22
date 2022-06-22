@@ -101,5 +101,64 @@ describe('Blog app', function () {
       cy.contains('Another Cypress Blog.').get('#viewButton').click()
       cy.get('#removeButton').should('not.be.visible')
     })
+
+    it('blogs are in descending order by number of likes.', function() {
+      cy.createBlog({
+        title: 'Creating from Cypress.',
+        author: 'Mr. Cypress',
+        url: 'http://mrcypress.com/creating'
+      })
+      cy.createBlog({
+        title: 'Third Cypress Blog.',
+        author: 'Mr. Cypress',
+        url: 'http://mrcypress.com/third'
+      })
+
+      cy.contains('Creating from Cypress.').parent().find('button').as('firstButton')
+      cy.get('@firstButton').click()
+      cy.contains('Creating from Cypress.')
+        .parent()
+        .parent()
+        .children()
+        .contains('like')
+        .as('firstLikeButton')
+
+      cy.contains('Another Cypress Blog.').parent().find('button').as('secondButton')
+      cy.get('@secondButton').click()
+      cy.contains('Another Cypress Blog.')
+        .parent()
+        .parent()
+        .children()
+        .contains('like')
+        .as('secondLikeButton')
+
+      cy.contains('Third Cypress Blog.').parent().find('button').as('thirdButton')
+      cy.get('@thirdButton').click()
+      cy.contains('Third Cypress Blog.')
+        .parent()
+        .parent()
+        .children()
+        .contains('like')
+        .as('thirdLikeButton')
+
+      cy.get('@firstLikeButton').click()
+      cy.wait(250)
+      cy.get('@firstLikeButton').click()
+      cy.wait(250)
+      cy.get('@firstLikeButton').click()
+
+      cy.get('@secondLikeButton').click()
+      cy.wait(250)
+      cy.get('@secondLikeButton').click()
+
+      cy.get('@thirdLikeButton').click()
+
+      cy.get('.blog').eq(0).contains('Creating from Cypress.')
+      cy.get('.blog').eq(0).contains('likes 3')
+      cy.get('.blog').eq(1).contains('Another Cypress Blog.')
+      cy.get('.blog').eq(1).contains('likes 2')
+      cy.get('.blog').eq(2).contains('Third Cypress Blog.')
+      cy.get('.blog').eq(2).contains('likes 1')
+    })
   })
 })
