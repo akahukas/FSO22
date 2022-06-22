@@ -5,9 +5,12 @@ const BlogForm = ({ createBlog }) => {
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
+  // Tapahtumankäsittelijä <Create>-napin painallukselle.
   const addBlog = (event) => {
     event.preventDefault()
 
+    // Välitetään blogin tiedot parametrina saadulle
+    // tapahtumankäsittelijälle.
     createBlog({
       title: title,
       author: author,

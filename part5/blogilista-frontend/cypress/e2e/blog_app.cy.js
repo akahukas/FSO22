@@ -1,6 +1,9 @@
 describe('Blog app', function () {
   beforeEach(function() {
+    // Nollataan tietokanta.
     cy.request('POST', 'http://localhost:3003/api/testing/reset')
+
+    // Luodaan kaksi testikäyttäjää.
     const user = {
       name: 'E2E Tester',
       username: 'e2etester',
@@ -13,6 +16,8 @@ describe('Blog app', function () {
     }
     cy.request('POST', 'http://localhost:3003/api/users', user)
     cy.request('POST', 'http://localhost:3003/api/users', anotherUser)
+
+    // Palataan aloitussivulle.
     cy.visit('http://localhost:3000')
   })
 
@@ -42,6 +47,7 @@ describe('Blog app', function () {
 
   describe('When logged in', function() {
     beforeEach(function() {
+      // Kirjaudutaan sisään sivulle.
       cy.login({ username: 'e2etester', password: 'securePassword' })
     })
 
@@ -65,8 +71,9 @@ describe('Blog app', function () {
     })
   })
 
-  describe('and blogs exist', function() {
+  describe('When blogs exist', function() {
     beforeEach(function() {
+      // Kirjaudutaan sisälle ja luodaan testiblogi.
       cy.login({ username: 'e2etester', password: 'securePassword' })
       cy.createBlog({
         title: 'Another Cypress Blog.',
@@ -76,7 +83,6 @@ describe('Blog app', function () {
     })
 
     it('a like can be added to one of the blogs.', function() {
-
       cy.contains('Another Cypress Blog.').get('#viewButton').click()
 
       cy.get('#likes').contains(0)
@@ -103,6 +109,7 @@ describe('Blog app', function () {
     })
 
     it('blogs are in descending order by number of likes.', function() {
+      // Luodaan vielä kaksi uutta testiblogia, nyt yhteensä 3 kpl.
       cy.createBlog({
         title: 'Creating from Cypress.',
         author: 'Mr. Cypress',
@@ -114,8 +121,11 @@ describe('Blog app', function () {
         url: 'http://mrcypress.com/third'
       })
 
+      // Haetaan ensimmäisen blogin <view>-painike ja painetaan sitä.
       cy.contains('Creating from Cypress.').parent().find('button').as('firstButton')
       cy.get('@firstButton').click()
+
+      // Haetaan avautuneen komponentin "lapsista" tykkäysnappi ja tallennetaan se aliakseen.
       cy.contains('Creating from Cypress.')
         .parent()
         .parent()
@@ -123,6 +133,8 @@ describe('Blog app', function () {
         .contains('like')
         .as('firstLikeButton')
 
+      // Toimitaan samalla tavalla toisen blogin kanssa, painetaan <view>-painiketta ja
+      // haetaan avautuneen komponentin sisältä tykkäyspainike.
       cy.contains('Another Cypress Blog.').parent().find('button').as('secondButton')
       cy.get('@secondButton').click()
       cy.contains('Another Cypress Blog.')
@@ -132,6 +144,7 @@ describe('Blog app', function () {
         .contains('like')
         .as('secondLikeButton')
 
+      // Edelleen sama toimenpide kolmannelle blogille.
       cy.contains('Third Cypress Blog.').parent().find('button').as('thirdButton')
       cy.get('@thirdButton').click()
       cy.contains('Third Cypress Blog.')
@@ -141,18 +154,26 @@ describe('Blog app', function () {
         .contains('like')
         .as('thirdLikeButton')
 
+      // Lisätään ensimmäiselle blogille kolme tykkäystä,
+      // odotetaan vastauksen rekisteröitymistä kunkin
+      // painalluksen jälkeen 250 millisekuntia.
       cy.get('@firstLikeButton').click()
       cy.wait(250)
       cy.get('@firstLikeButton').click()
       cy.wait(250)
       cy.get('@firstLikeButton').click()
 
+      // Lisätään toiselle blogille kaksi tykkäystä,
+      // ja odotetaan tykkäysten vastauksen rekisteröitymistä.
       cy.get('@secondLikeButton').click()
       cy.wait(250)
       cy.get('@secondLikeButton').click()
 
+      // Lisätään niin ikään viimeiselle blogille tykkäys.
       cy.get('@thirdLikeButton').click()
 
+      // Tarkastetaan, että sivulla ylimpänä eniten tykkäyksiä
+      // saanut blogi. Lisäksi tarkastetaan tykkäysten oikeat määrät.
       cy.get('.blog').eq(0).contains('Creating from Cypress.')
       cy.get('.blog').eq(0).contains('likes 3')
       cy.get('.blog').eq(1).contains('Another Cypress Blog.')

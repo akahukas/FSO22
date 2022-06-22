@@ -7,11 +7,13 @@ const setToken = newToken => {
   token = `bearer ${newToken}`
 }
 
+// Route kaikkien blogien noutamiseksi tietokannasta.
 const getAll = async () => {
   const response = await axios.get(baseUrl)
   return response.data
 }
 
+// Route uuden blogin luomiseen ja tietokantaan tallentamiseen.
 const createNew = async newBlog => {
   const config = {
     headers: { Authorization: token }
@@ -22,11 +24,13 @@ const createNew = async newBlog => {
   return response.data
 }
 
+// Route vanhan jo tietokannassa olevan blogin tietojen päivittämiseen.
 const updateOld = async (id, newBlog) => {
   const response = await axios.put(`${baseUrl}/${id}`, newBlog)
   return response.data
 }
 
+// Route jo tietokannassa olevan blogin poistamiseksi tietokannasta.
 const remove = async id => {
   const config = {
     headers: { Authorization: token }

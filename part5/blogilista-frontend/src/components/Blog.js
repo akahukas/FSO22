@@ -5,13 +5,17 @@ const Blog = ({ blog, handleLike , checkCorrectUser, remove }) => {
   const [minimized, setMinimized] = useState(true)
   const [removeVisible, setRemoveVisible] = useState(false)
 
+  // Tallennetaan muuttujiin blogin sisällön ja <remove>-painikkeen näkyvyys.
   const hideWhenMinimized = { display: minimized ? 'none' : '' }
-
   const showWhenCorrectUser = { display: removeVisible ? '' : 'none' }
 
+  // Jos <view/hide>-painiketta painetaan,
+  // muutetaan blogin sisällön näkyvyyttä.
   const toggleSize = () => {
     setMinimized(!minimized)
 
+    // Tarkastetaan kuuluuko blogi kirjautuneelle käyttäjälle.
+    // Jos kuuluu, asetetaan <remove>-painike näkyviin.
     if (checkCorrectUser(blog.id)) {
       setRemoveVisible(true)
     }

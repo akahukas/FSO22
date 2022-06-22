@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from 'react'
-import Blog from './components/Blog'
+
+// Hyödynnettävät palvelut.
 import blogService from './services/blogs'
 import loginService from './services/login'
 
+// HYödynnettävät komponentit.
+import Blog from './components/Blog'
 import SuccessNotification from './components/SuccessNotification'
 import ErrorNotification from './components/ErrorNotification'
-
 import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
@@ -19,12 +21,16 @@ const App = () => {
   const [successMessage, setSuccessMessage] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
 
+  // Viite BlogForm-komponenttiin.
   const blogFormRef = useRef()
 
+  // Alustetaan blogit ruudulle.
   useEffect(() => {
     renderBlogs()
   }, [])
 
+  // Alustetaan käyttäjän istunto, jos
+  // käyttäjä löytyy edelleen selaimen localStoragesta.
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
 
@@ -35,12 +41,15 @@ const App = () => {
     }
   }, [])
 
+  // Vastaa blogien päivittämisestä ruudulle lajiteltuna
+  // blogien tykkäysten mukaiseen laskevaan järjestykseen.
   const renderBlogs = async () => {
     const response = await blogService.getAll()
 
     setBlogs(response.sort((blog1, blog2) => blog2.likes - blog1.likes))
   }
 
+  // Uuden blogin lisäämisestä huolehtiva tapahtumankäsittelijä.
   const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility()
     blogService
@@ -58,8 +67,8 @@ const App = () => {
     }, 5000)
   }
 
+  // Tykkäyksen lisäämisestä blogille vastaava tapahtumankäsittelijä.
   const addLike = async (id, blogObject) => {
-
     await blogService.updateOld(id, blogObject)
 
     renderBlogs()
@@ -70,6 +79,9 @@ const App = () => {
     }, 5000)
   }
 
+  // Tarkastaa kuuluuko parametrina saatua blogin id:tä vastaava blogi
+  // kirjautuneen käyttäjän luomiin blogeihin. Palauttaa <true> jos
+  // kuuluu ja <false> jos ei kuulu.
   const isBlogCreatedByLoggedUser = (blogId) => {
     const currentBlog = blogs.find(({ id }) => id === blogId)
 
@@ -82,6 +94,7 @@ const App = () => {
     return false
   }
 
+  // Blogin poistamisesta vastuussa oleva tapahtumankäsittelijä.
   const removeBlog = async (blogId) => {
     const blog = blogs.find(({ id }) => id === blogId)
 
@@ -99,6 +112,7 @@ const App = () => {
     }
   }
 
+  // Tapahtumankäsittelijä, joka huolehtii käyttäjän sisäänkirjautumisesta.
   const handleLogin = async (event) => {
     event.preventDefault()
 
@@ -128,6 +142,7 @@ const App = () => {
     }
   }
 
+  // Käyttäjän uloskirjaamisesta vastuussa oleva tapahtumankäsittelijä.
   const handleLogout = (event) => {
     event.preventDefault()
 
@@ -139,28 +154,35 @@ const App = () => {
     }
   }
 
+  // Palauttaa kutsuttaessa kirjautumislomake-komponentin.
   const loginForm = () => (
     <LoginForm handleSubmit={handleLogin} username={username}
       setUsername={setUsername} password={password} setPassword={setPassword}
     />
   )
 
+  // Komponentti, joka näyttää sisäänkirjautuneen
+  // käyttäjän nimen ja uloskirjaamispainikkeen.
   const loggedInElement = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
     const name = JSON.parse(loggedUserJSON).name
 
-    return <div>
-      <p>Logged in as {name}.</p>
-      <button id='logoutButton' onClick={handleLogout}>Logout</button>
-    </div>
+    return (
+      <div>
+        <p>Logged in as {name}.</p>
+        <button id='logoutButton' onClick={handleLogout}>Logout</button>
+      </div>
+    )
   }
 
+  // Palauttaa kutsuttaessa bloginluomis-komponentin.
   const blogForm = () => (
     <Togglable buttonLabel='Create new blog' ref={blogFormRef}>
       <BlogForm createBlog={addBlog} />
     </Togglable>
   )
 
+  // Palauttaa kutsuttaessa komponentin, joka sisältää listan tietokannassa olevista blogeista.
   const bloglistElement = () => (
     <div id='blogList'>
       <h2>Blogs in database:</h2>
