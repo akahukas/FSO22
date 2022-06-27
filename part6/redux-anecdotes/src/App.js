@@ -1,4 +1,4 @@
-import { addNewAnecdote, addVoteTo } from './reducers/anecdoteReducer'
+import { addNewAnecdote, addVoteTo, sortAnecdotes } from './reducers/anecdoteReducer'
 import { useSelector, useDispatch } from 'react-redux'
 
 const App = () => {
@@ -8,6 +8,9 @@ const App = () => {
   const vote = (id) => {
     // Lähetetään Redux-storeen äänen antava action.
     dispatch(addVoteTo(id))
+
+    // Lähetetöön Redux-storeen anekdootit järjestävä action.
+    dispatch(sortAnecdotes())
   }
 
   const addAnecdote = (event) => {

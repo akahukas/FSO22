@@ -37,6 +37,12 @@ export const addNewAnecdote = (content) => {
     data: asObject(content)
   }
 }
+// Anekdoottien järjestämisen action creator.
+export const sortAnecdotes = () => {
+  return {
+    type: 'SORT'
+  }
+}
 
 const reducer = (state = initialState, action) => {
   //console.log('state now: ', state)
@@ -69,6 +75,13 @@ const reducer = (state = initialState, action) => {
       // Palautetaan kopio alkuperäisestä tilasta, jonka perään
       // on liitetty actionin mukana lähetetty anekdoottiolio.
       return [ ...state, action.data ]
+
+    case 'SORT':
+      // Palautetaan tila järjestettynä 
+      // äänien mukaiseen laskevaan suuruusjärjestykseen.
+      return (state.sort(
+        (anecdote1, anecdote2) => anecdote2.votes - anecdote1.votes)
+      )
     
     default:
       return state
