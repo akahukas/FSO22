@@ -28,6 +28,15 @@ export const addVoteTo = (id) => {
     data: { id }
   }
 }
+// Uuden anekdootin luomisen action creator.
+export const addNewAnecdote = (content) => {
+  // Asetetaan actionin tyypiksi uuden anekdootin luonti
+  // ja lähetetään datan mukana uusi anekdoottiolio.
+  return {
+    type: 'NEW_ANECDOTE',
+    data: asObject(content)
+  }
+}
 
 const reducer = (state = initialState, action) => {
   //console.log('state now: ', state)
@@ -55,6 +64,11 @@ const reducer = (state = initialState, action) => {
       return state.map(
         anecdote => anecdote.id === id ? changedAnecdote : anecdote
       )
+
+    case 'NEW_ANECDOTE':
+      // Palautetaan kopio alkuperäisestä tilasta, jonka perään
+      // on liitetty actionin mukana lähetetty anekdoottiolio.
+      return [ ...state, action.data ]
     
     default:
       return state

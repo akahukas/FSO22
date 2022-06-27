@@ -1,4 +1,4 @@
-import { addVoteTo } from './reducers/anecdoteReducer'
+import { addNewAnecdote, addVoteTo } from './reducers/anecdoteReducer'
 import { useSelector, useDispatch } from 'react-redux'
 
 const App = () => {
@@ -8,6 +8,19 @@ const App = () => {
   const vote = (id) => {
     // Lähetetään Redux-storeen äänen antava action.
     dispatch(addVoteTo(id))
+  }
+
+  const addAnecdote = (event) => {
+    event.preventDefault()
+    
+    // Tallennetaan muuttujaan uuden anekdootin 
+    // teksti ja tyhjennetään syöttökenttä.
+    const content = event.target.anecdote.value
+    event.target.anecdote.value = ''
+
+    // Lähetetään Redux-storeen uuden 
+    // anekdootin lisäävä action.
+    dispatch(addNewAnecdote(content))
   }
 
   return (
@@ -25,9 +38,9 @@ const App = () => {
         </div>
       )}
       <h2>Create new:</h2>
-      <form>
-        <div><input /></div>
-        <button>Create</button>
+      <form onSubmit={addAnecdote}>
+        <div><input name='anecdote'/></div>
+        <button type='submit'>Create</button>
       </form>
     </div>
   )
