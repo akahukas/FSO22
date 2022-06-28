@@ -3,7 +3,13 @@ import { useSelector, useDispatch } from 'react-redux'
 import { setVoteNotification, clearNotification } from '../reducers/notificationReducer'
 
 const AnecdoteList = () => {
-  const anecdotes = useSelector(state => state.anecdotes)
+  // Suodatetaan ruudulle renderöitävät anekdootit Redux-storen
+  // filter-kentän avulla. Jos suodatin on tyhjä, renderöidään kaikki anekdootit.
+  const anecdotes = useSelector(state => {
+    return state.filter === ''
+      ? state.anecdotes
+      : state.anecdotes.filter(anecdote => anecdote.content.toLowerCase().includes(state.filter))
+  })
   const dispatch = useDispatch()
   
   const vote = ({ id, content }) => {
