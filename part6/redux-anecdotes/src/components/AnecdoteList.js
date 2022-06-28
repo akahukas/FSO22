@@ -12,16 +12,13 @@ const AnecdoteList = () => {
   })
   const dispatch = useDispatch()
   
-  const vote = ({ id, content }) => {
+  const vote = (anecdote) => {
     // Lähetetään Redux-storeen äänen antava action.
-    dispatch(addVoteTo(id))
-
-    // Lähetetöön Redux-storeen anekdootit järjestävä action.
-    dispatch(sortAnecdotes())
+    dispatch(addVoteTo(anecdote))
 
     // Lähetetään Redux-storeen ilmoituksen asettava action
     // ja tyhjennetään se actionin avulla 5 sekunnin kuluttua.
-    dispatch(setVoteNotification(content))
+    dispatch(setVoteNotification(anecdote.content))
     setTimeout(() => {
       dispatch(clearNotification())
     }, 5000)

@@ -5,26 +5,15 @@ const anecdoteSlice = createSlice({
   name: 'anecdotes',
   initialState: [],
   reducers: {
-    // Äänestyksen action creator.
-    addVoteTo(state, action) {
-      // Tallennetaan muuttujaan anekdootin tunniste 
-      // ja haetaan tilasta tunnistetta vastaava anekdootti.
-      const id = action.payload
-      const anecdoteToVote = state.find(
-        anecdote => anecdote.id === id
-      )
-      
-      // Muokattava anekdootti, kopioidaan tilasta tiedot
-      // ja kasvatetaan anekdootin äänimäärää yhdellä.
-      const changedAnecdote = {
-        ...anecdoteToVote,
-        votes: anecdoteToVote.votes + 1
-      }
+    // Alkup. anekdootin muokatulla korvaava action creator.
+    updateAnecdoteVotes(state, action) {
+      // Tallennetaan muuttujaan muokattu anekdootti.
+      const updatedAnecdote = action.payload
       
       // Korvataan tilassa alkuperäinen anekdootti muokatulla,
       // säilytetään muut anekdootit ennallaan.
       return state.map(
-        anecdote => anecdote.id === id ? changedAnecdote : anecdote
+        anecdote => anecdote.id === updatedAnecdote.id ? updatedAnecdote : anecdote
       )
     },
     // Anekdoottien järjestämisen action creator.
@@ -47,8 +36,8 @@ const anecdoteSlice = createSlice({
   }
 })
 
-export const { 
-  addVoteTo,
+export const {
+  updateAnecdoteVotes,
   sortAnecdotes,
   appendAnecdote,
   setAnecdotes 
@@ -57,17 +46,41 @@ export const {
 // Asynkroninen action anekdoottien alustamiseksi. 
 export const initializeAnecdotes = () => {
   return async dispatch => {
+
+    // Haetaan palvelimelle tallennetut anekdootit ja 
+    // tallennetaan ne Redux-storen tilaan.
     const anecdotes = await anecdoteService.getAll()
     dispatch(setAnecdotes(anecdotes))
+
+    // Sortataan palvelimelta haetut anekdootit
+    // äänimäärän perusteella sillä ne eivät
+    // välttämättä ole palvelimella oikeassa järjestyksessä.
+    dispatch(sortAnecdotes())
   }
 }
 
 // Asynkroninen action anekdootin anekdootin lisäämiseksi.
 export const addNewAnecdote = content => {
   return async dispatch => {
-    // Tallennetaan palvelimelle uusi anekdootti.
+
+    // Tallennetaan palvelimelle ja 
+    // Redux-storen tilaan uusi anekdootti.
     const newAnecdote = await anecdoteService.createNew(content)
     dispatch(appendAnecdote(newAnecdote))
+  }
+}
+
+// Asynkroninen action anekdootin äänimäärän päivittämiseen.
+export const addVoteTo = anecdote => {
+  return async dispatch => {
+
+    // Tallennetaan palvelimelle ja 
+    // Redux-storen tilaan päivitetty anekdootti.
+    const updatedAnecdote = await anecdoteService.updateOld(anecdote)
+    dispatch(updateAnecdoteVotes(updatedAnecdote))
+    
+    // Lähetetöön Redux-storeen anekdootit järjestävä action.
+    dispatch(sortAnecdotes())
   }
 }
 

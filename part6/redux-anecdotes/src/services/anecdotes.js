@@ -12,6 +12,13 @@ const asObject = (content) => {
   }
 }
 
+const addVote = (anecdoteObject) => {
+  return {
+    ...anecdoteObject,
+    votes: anecdoteObject.votes + 1
+  }
+}
+
 const getAll = async () => {
   const response = await axios.get(originalUrl)
   return response.data
@@ -24,7 +31,16 @@ const createNew = async (content) => {
   return response.data
 }
 
+const updateOld = async (anecdoteObject) => {
+  const upvotedAnecdote = addVote(anecdoteObject)
+
+  const response = await axios.put(`${originalUrl}/${anecdoteObject.id}`, upvotedAnecdote)
+  
+  return response.data
+}
+
 export default { 
   getAll,
   createNew,
+  updateOld,
 }
