@@ -1,3 +1,5 @@
+import { createSlice } from '@reduxjs/toolkit'
+
 const anecdotesAtStart = [
   'If it hurts, do it more often',
   'Adding manpower to a late software project makes it later!',
@@ -19,41 +21,15 @@ const asObject = (anecdote) => {
 
 const initialState = anecdotesAtStart.map(asObject)
 
-// Äänestyksen action creator.
-export const addVoteTo = (id) => {
-  // Asetetaan actionin tyypiksi äänen antaminen
-  // ja lähetetään datan mukana anekdoottia vastaava id.
-  return {
-    type: 'UPVOTE',
-    data: { id }
-  }
-}
-// Uuden anekdootin luomisen action creator.
-export const addNewAnecdote = (content) => {
-  // Asetetaan actionin tyypiksi uuden anekdootin luonti
-  // ja lähetetään datan mukana uusi anekdoottiolio.
-  return {
-    type: 'NEW_ANECDOTE',
-    data: asObject(content)
-  }
-}
-// Anekdoottien järjestämisen action creator.
-export const sortAnecdotes = () => {
-  return {
-    type: 'SORT'
-  }
-}
-
-const anecdoteReducer = (state = initialState, action) => {
-  //console.log('state now: ', state)
-  //console.log('action', action)
-  
-  switch (action.type) {
-    case 'UPVOTE':
-
+const anecdoteSlice = createSlice({
+  name: 'anecdotes',
+  initialState,
+  reducers: {
+    // Äänestyksen action creator.
+    addVoteTo(state, action) {
       // Tallennetaan muuttujaan anekdootin tunniste 
       // ja haetaan tilasta tunnistetta vastaava anekdootti.
-      const id = action.data.id
+      const id = action.payload
       const anecdoteToVote = state.find(
         anecdote => anecdote.id === id
       )
@@ -70,22 +46,26 @@ const anecdoteReducer = (state = initialState, action) => {
       return state.map(
         anecdote => anecdote.id === id ? changedAnecdote : anecdote
       )
-
-    case 'NEW_ANECDOTE':
+    },
+    // Uuden anekdootin luomisen action creator.
+    addNewAnecdote(state, action) {
+      // Luodaan uusi anekdoottiolio parametrina saaduista tiedoista.
+      const newAnecdote = asObject(action.payload)
+      
       // Palautetaan kopio alkuperäisestä tilasta, jonka perään
       // on liitetty actionin mukana lähetetty anekdoottiolio.
-      return [ ...state, action.data ]
-
-    case 'SORT':
+      return [ ...state, newAnecdote ]
+    },
+    // Anekdoottien järjestämisen action creator.
+    sortAnecdotes(state, action) {
       // Palautetaan tila järjestettynä 
       // äänien mukaiseen laskevaan suuruusjärjestykseen.
       return (state.sort(
         (anecdote1, anecdote2) => anecdote2.votes - anecdote1.votes)
       )
-    
-    default:
-      return state
+    }
   }
-}
+})
 
-export default anecdoteReducer
+export const { addVoteTo, addNewAnecdote, sortAnecdotes } = anecdoteSlice.actions
+export default anecdoteSlice.reducer
