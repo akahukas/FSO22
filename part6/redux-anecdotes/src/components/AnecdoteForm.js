@@ -1,11 +1,12 @@
 import { addNewAnecdote } from '../reducers/anecdoteReducer'
 import { useDispatch } from 'react-redux'
 import { setAddNotification, clearNotification } from '../reducers/notificationReducer'
+import anecdoteService from '../services/anecdotes'
 
 const AnecdoteForm = () => {
   const dispatch = useDispatch()
 
-  const addAnecdote = (event) => {
+  const addAnecdote = async (event) => {
     event.preventDefault()
     
     // Tallennetaan muuttujaan uuden anekdootin 
@@ -13,9 +14,12 @@ const AnecdoteForm = () => {
     const content = event.target.anecdote.value
     event.target.anecdote.value = ''
 
+    // Tallennetaan palvelimelle uusi anekdootti.
+    const newAnecdote = await anecdoteService.createNew(content)
+
     // Lähetetään Redux-storeen uuden 
     // anekdootin lisäävä action.
-    dispatch(addNewAnecdote(content))
+    dispatch(addNewAnecdote(newAnecdote))
 
     // Lähetetään Redux-storeen ilmoituksen asettava action
     // ja tyhjennetään se actionin avulla 5 sekunnin kuluttua.
