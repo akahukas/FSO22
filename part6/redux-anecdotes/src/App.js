@@ -1,4 +1,5 @@
-import { addNewAnecdote, addVoteTo, sortAnecdotes } from './reducers/anecdoteReducer'
+import AnecdoteForm from './components/AnecdoteForm'
+import { addVoteTo, sortAnecdotes } from './reducers/anecdoteReducer'
 import { useSelector, useDispatch } from 'react-redux'
 
 const App = () => {
@@ -13,18 +14,7 @@ const App = () => {
     dispatch(sortAnecdotes())
   }
 
-  const addAnecdote = (event) => {
-    event.preventDefault()
-    
-    // Tallennetaan muuttujaan uuden anekdootin 
-    // teksti ja tyhjennetään syöttökenttä.
-    const content = event.target.anecdote.value
-    event.target.anecdote.value = ''
-
-    // Lähetetään Redux-storeen uuden 
-    // anekdootin lisäävä action.
-    dispatch(addNewAnecdote(content))
-  }
+  
 
   return (
     <div>
@@ -40,11 +30,7 @@ const App = () => {
           </div>
         </div>
       )}
-      <h2>Create new:</h2>
-      <form onSubmit={addAnecdote}>
-        <div><input name='anecdote'/></div>
-        <button type='submit'>Create</button>
-      </form>
+      <AnecdoteForm />
     </div>
   )
 }
