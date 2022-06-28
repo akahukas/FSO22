@@ -27,12 +27,6 @@ const anecdoteSlice = createSlice({
         anecdote => anecdote.id === id ? changedAnecdote : anecdote
       )
     },
-    // Uuden anekdootin luomisen action creator.
-    addNewAnecdote(state, action) {
-      // Palautetaan kopio alkuperäisestä tilasta, jonka perään
-      // on liitetty actionin mukana lähetetty anekdoottiolio.
-      return [ ...state, action.payload ]
-    },
     // Anekdoottien järjestämisen action creator.
     sortAnecdotes(state, action) {
       // Palautetaan tila järjestettynä 
@@ -43,6 +37,7 @@ const anecdoteSlice = createSlice({
     },
     // Anekdootin lisäämisen action creator.
     appendAnecdote(state, action) {
+      // Lisätään uusi anekdootti Redux-storen tilan perään.
       state.push(action.payload)
     },
     // Anekdoottien korvaamisen action creator.
@@ -53,8 +48,7 @@ const anecdoteSlice = createSlice({
 })
 
 export const { 
-  addVoteTo, 
-  addNewAnecdote, 
+  addVoteTo,
   sortAnecdotes,
   appendAnecdote,
   setAnecdotes 
@@ -65,6 +59,15 @@ export const initializeAnecdotes = () => {
   return async dispatch => {
     const anecdotes = await anecdoteService.getAll()
     dispatch(setAnecdotes(anecdotes))
+  }
+}
+
+// Asynkroninen action anekdootin anekdootin lisäämiseksi.
+export const addNewAnecdote = content => {
+  return async dispatch => {
+    // Tallennetaan palvelimelle uusi anekdootti.
+    const newAnecdote = await anecdoteService.createNew(content)
+    dispatch(appendAnecdote(newAnecdote))
   }
 }
 
