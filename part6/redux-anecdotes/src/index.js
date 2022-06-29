@@ -6,6 +6,7 @@ import { store } from './store'
 
 console.log(store.getState())
 
+// Välitetään Redux-store <Provider /> -komponentin lapsille.
 ReactDOM.createRoot(document.getElementById('root')).render(
   <Provider store={store}>
     <App />
