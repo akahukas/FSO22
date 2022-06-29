@@ -33,12 +33,12 @@
     {
       "content": "0-moti can be a pretty bad thing.",
       "id": "58503",
-      "votes": 7
+      "votes": 9
     },
     {
       "content": "What doesn't kill you makes you stronger.",
       "id": "8098",
-      "votes": 14
+      "votes": 15
     },
     {
       "content": "Taking breaks is important.",
@@ -49,6 +49,11 @@
       "content": "Remember to have fun.",
       "id": "78990",
       "votes": 0
+    },
+    {
+      "content": "Coffee.",
+      "id": "53206",
+      "votes": 1
     }
   ]
 }

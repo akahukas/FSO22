@@ -1,8 +1,8 @@
-import { useSelector } from 'react-redux'
+import { connect } from 'react-redux'
 
-const Notification = () => {
-  // Haetaan Redux-storen tilan kentästä ilmoituksen viesti.
-  const notification = useSelector(state => state.notification)
+const Notification = (props) => {
+  // Haetaan propseista ilmoituksen viesti.
+  const notification = props.notification
 
   // Jos ilmoitus on tyhjä, ei palauteta ilmoituselementtiä.
   if(notification === null) {
@@ -23,4 +23,13 @@ const Notification = () => {
   )
 }
 
-export default Notification
+// Määritellään Redux-storen tilasta
+// propsiksi ilmoituksen tila.
+const mapStateToProps = (state) => {
+  return {
+    notification: state.notification
+  }
+}
+
+const ConnectedNotification = connect(mapStateToProps)(Notification)
+export default ConnectedNotification
