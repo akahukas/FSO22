@@ -1,6 +1,6 @@
-import { addVoteTo, sortAnecdotes } from '../reducers/anecdoteReducer'
+import { addVoteTo } from '../reducers/anecdoteReducer'
 import { useSelector, useDispatch } from 'react-redux'
-import { setVoteNotification, clearNotification } from '../reducers/notificationReducer'
+import { setNotification } from '../reducers/notificationReducer'
 
 const AnecdoteList = () => {
   // Suodatetaan ruudulle renderöitävät anekdootit Redux-storen
@@ -17,11 +17,8 @@ const AnecdoteList = () => {
     dispatch(addVoteTo(anecdote))
 
     // Lähetetään Redux-storeen ilmoituksen asettava action
-    // ja tyhjennetään se actionin avulla 5 sekunnin kuluttua.
-    dispatch(setVoteNotification(anecdote.content))
-    setTimeout(() => {
-      dispatch(clearNotification())
-    }, 5000)
+    // ja määritetään se poistettavaksi 5 sekunnin kuluttua.
+    dispatch(setNotification(`You voted '${anecdote.content}'.`, 5))
   }
 
   return (

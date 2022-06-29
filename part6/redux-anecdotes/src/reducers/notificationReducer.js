@@ -21,6 +21,13 @@ const notificationSlice = createSlice({
 
       return state
     },
+    // Ilmoituksen muuttamisen action creator.
+    changeNotification(state, action) {
+      const message = action.payload
+      state = message
+
+      return state
+    },
     // Ilmoituksen tyhjennyksen action creator.
     clearNotification(state, action) {
       state = null
@@ -32,6 +39,22 @@ const notificationSlice = createSlice({
 
 export const { 
   setVoteNotification, 
-  setAddNotification, 
-  clearNotification } = notificationSlice.actions
+  setAddNotification,
+  changeNotification,
+  clearNotification 
+} = notificationSlice.actions
+
+// Action yksinkertaiseen ilmoituksen vaihtamiseen toisesta komponentista.
+export const setNotification = (notificationMessage, timeInSeconds) => {
+  return dispatch => {
+    // Asetetaan ilmoitusviesti.
+    dispatch(changeNotification(notificationMessage))
+
+    // Tyhjennetään ilmoitus sekunteina annetun ajan kuluttua.
+    setTimeout(() => {
+      dispatch(clearNotification())
+    }, timeInSeconds * 1000)
+  }
+}
+
 export default notificationSlice.reducer

@@ -1,6 +1,6 @@
 import { addNewAnecdote } from '../reducers/anecdoteReducer'
 import { useDispatch } from 'react-redux'
-import { setAddNotification, clearNotification } from '../reducers/notificationReducer'
+import { setNotification } from '../reducers/notificationReducer'
 
 const AnecdoteForm = () => {
   const dispatch = useDispatch()
@@ -18,11 +18,8 @@ const AnecdoteForm = () => {
     dispatch(addNewAnecdote(content))
 
     // Lähetetään Redux-storeen ilmoituksen asettava action
-    // ja tyhjennetään se actionin avulla 5 sekunnin kuluttua.
-    dispatch(setAddNotification(content))
-    setTimeout(() => {
-      dispatch(clearNotification())
-    }, 5000)
+    // ja määritetään se poistettavaksi 5 sekunnin kuluttua.
+    dispatch(setNotification(`You added '${content}' to the list of Anecdotes.`, 5))
   }
 
   return (
