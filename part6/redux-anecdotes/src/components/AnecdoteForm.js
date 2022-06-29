@@ -1,9 +1,8 @@
 import { addNewAnecdote } from '../reducers/anecdoteReducer'
-import { useDispatch } from 'react-redux'
 import { setNotification } from '../reducers/notificationReducer'
+import { connect } from 'react-redux'
 
-const AnecdoteForm = () => {
-  const dispatch = useDispatch()
+const AnecdoteForm = (props) => {
 
   const addAnecdote = async (event) => {
     event.preventDefault()
@@ -15,11 +14,11 @@ const AnecdoteForm = () => {
 
     // Lähetetään Redux-storeen uuden 
     // anekdootin lisäävä asynkroninen action.
-    dispatch(addNewAnecdote(content))
+    props.addNewAnecdote(content)
 
     // Lähetetään Redux-storeen ilmoituksen asettava action
     // ja määritetään se poistettavaksi 5 sekunnin kuluttua.
-    dispatch(setNotification(`You added '${content}' to the list of Anecdotes.`, 5))
+    props.setNotification(`You added '${content}' to the list of Anecdotes.`, 5)
   }
 
   return (
@@ -33,4 +32,16 @@ const AnecdoteForm = () => {
   )
 }
 
-export default AnecdoteForm
+// Määritellään actionit propsien kautta välitettäväksi.
+const mapDispatchToProps = {
+  addNewAnecdote,
+  setNotification,
+}
+
+// Määritellään yhdistetyksi komponentiksi.
+const ConnectedAnecdoteForm = connect(
+  null,
+  mapDispatchToProps
+)(AnecdoteForm)
+
+export default ConnectedAnecdoteForm

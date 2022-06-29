@@ -31,5 +31,6 @@ const mapStateToProps = (state) => {
   }
 }
 
+// Määritellään yhdistetyksi komponentiksi.
 const ConnectedNotification = connect(mapStateToProps)(Notification)
 export default ConnectedNotification

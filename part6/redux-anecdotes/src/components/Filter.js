@@ -1,13 +1,12 @@
 import { setFilter } from '../reducers/filterReducer'
-import { useDispatch } from 'react-redux'
+import { connect } from 'react-redux'
 
-const Filter = () => {
-  const dispatch = useDispatch()
+const Filter = (props) => {
   
   // Syöttökentän arvon muutoksen tapahtumankäsittelijä.
   const handleChange = (event) => {
     // Lähetetään Redux-storeen suodattimen asettava action.
-    dispatch(setFilter(event.target.value))
+    props.setFilter(event.target.value)
   }
   
   // Elementin tyyliasetukset.
@@ -22,4 +21,15 @@ const Filter = () => {
   )
 }
 
-export default Filter
+// Määritellään action propsien kautta välitettäväksi.
+const mapDispatchToProps = {
+  setFilter,
+}
+
+// Määritellään yhdistetyksi komponentiksi.
+const ConnectedFilter = connect(
+  null,
+  mapDispatchToProps
+)(Filter)
+
+export default ConnectedFilter
