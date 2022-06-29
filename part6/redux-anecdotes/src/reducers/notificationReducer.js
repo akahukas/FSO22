@@ -44,14 +44,24 @@ export const {
   clearNotification 
 } = notificationSlice.actions
 
+// Alustetaan muuttuja aikakatkaisun tunnisteelle.
+let timeoutId
+
 // Action yksinkertaiseen ilmoituksen vaihtamiseen toisesta komponentista.
 export const setNotification = (notificationMessage, timeInSeconds) => {
   return dispatch => {
     // Asetetaan ilmoitusviesti.
     dispatch(changeNotification(notificationMessage))
 
+    // Jos aikaisempi aikakatkaisu on 
+    // vielä voimassa, poistetaan se.
+    if (timeoutId) {
+      clearTimeout(timeoutId)
+    }
+
     // Tyhjennetään ilmoitus sekunteina annetun ajan kuluttua.
-    setTimeout(() => {
+    // Tallennetaan aikakatkaisun tunniste muuttujaan.
+    timeoutId = setTimeout(() => {
       dispatch(clearNotification())
     }, timeInSeconds * 1000)
   }
