@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
 // Hyödynnettävät palvelut.
 import blogService from './services/blogs'
@@ -15,17 +16,23 @@ import LoginForm from './components/LoginForm'
 // Hyödynnettävät reducerit.
 import { setSuccessNotification, clearSuccessNotification } from './reducers/successNotificationReducer'
 import { setErrorNotification, clearErrorNotification } from './reducers/errorNotificationReducer'
-
-import { useDispatch } from 'react-redux'
+import { initializeBlogs, setBlogs, appendBlog } from './reducers/blogReducer'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
   // Käytetään actionien lähetyksessä Redux-storeen.
   const dispatch = useDispatch()
+
+  // Alustetaan blogit avauksen yhteydessä.
+  useEffect(() => {
+    dispatch(initializeBlogs())
+  }, [dispatch])
+
+  // Määritetään blogit muuttujaan Redux-storen tilasta.
+  const blogs = useSelector(state => state.blogs)
 
   // Viite BlogForm-komponenttiin.
   const blogFormRef = useRef()
@@ -52,7 +59,8 @@ const App = () => {
   const renderBlogs = async () => {
     const response = await blogService.getAll()
 
-    setBlogs(response.sort((blog1, blog2) => blog2.likes - blog1.likes))
+    // Lähetetään Redux-storeen blogit asettava action.
+    dispatch(setBlogs(response.sort((blog1, blog2) => blog2.likes - blog1.likes)))
   }
 
   // Uuden blogin lisäämisestä huolehtiva tapahtumankäsittelijä.
@@ -60,7 +68,9 @@ const App = () => {
     blogFormRef.current.toggleVisibility()
     blogService.createNew(blogObject).then((returnedBlog) => {
       renderBlogs()
-      setBlogs(blogs.concat(returnedBlog))
+
+      // Lähetetään Redux-storeen blogin lisäävä action.
+      dispatch(appendBlog(returnedBlog))
     })
 
     renderBlogs()
