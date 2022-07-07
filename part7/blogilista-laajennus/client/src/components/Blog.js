@@ -40,7 +40,7 @@ const Blog = ({ blog, handleLike, checkCorrectUser, remove }) => {
     handleLike(blog.id, {
       user: blog.user.id,
       likes: newLikes,
-      author: blog.user.name,
+      author: blog.user.author,
       title: blog.title,
       url: blog.url,
     })
