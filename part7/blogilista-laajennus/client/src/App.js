@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
-// HYödynnettävät komponentit.
+// Hyödynnettävät komponentit.
 import Blog from './components/Blog'
 import SuccessNotification from './components/SuccessNotification'
 import ErrorNotification from './components/ErrorNotification'
@@ -12,14 +12,20 @@ import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 
+// Hyödynnettävät reducerit.
+import { setSuccessNotification, clearSuccessNotification } from './reducers/successNotificationReducer'
+import { setErrorNotification, clearErrorNotification } from './reducers/errorNotificationReducer'
+
+import { useDispatch } from 'react-redux'
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
-  const [successMessage, setSuccessMessage] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
+  // Käytetään actionien lähetyksessä Redux-storeen.
+  const dispatch = useDispatch()
 
   // Viite BlogForm-komponenttiin.
   const blogFormRef = useRef()
@@ -59,11 +65,13 @@ const App = () => {
 
     renderBlogs()
 
-    setSuccessMessage(
+    // Lähetetään Redux-storeen ilmoituksen asettava action ja
+    // nollataan se alkuperäiseen tilaansa 5 sekunnin kuluttua.
+    dispatch(setSuccessNotification(
       `Added a new blog ${blogObject.title} by ${blogObject.author}.`
-    )
+    ))
     setTimeout(() => {
-      setSuccessMessage(null)
+      dispatch(clearSuccessNotification())
     }, 5000)
   }
 
@@ -73,11 +81,13 @@ const App = () => {
 
     renderBlogs()
 
-    setSuccessMessage(
+    // Lähetetään Redux-storeen ilmoituksen asettava action ja
+    // nollataan se alkuperäiseen tilaansa 5 sekunnin kuluttua.
+    dispatch(setSuccessNotification(
       `Added a like to blog ${blogObject.title} by ${blogObject.author}.`
-    )
+    ))
     setTimeout(() => {
-      setSuccessMessage(null)
+      dispatch(clearSuccessNotification())
     }, 5000)
   }
 
@@ -107,11 +117,13 @@ const App = () => {
 
       renderBlogs()
 
-      setSuccessMessage(
+      // Lähetetään Redux-storeen ilmoituksen asettava action ja
+      // nollataan se alkuperäiseen tilaansa 5 sekunnin kuluttua.
+      dispatch(setSuccessNotification(
         `Blog ${blog.title} by ${blog.author} removed successfully.`
-      )
+      ))
       setTimeout(() => {
-        setSuccessMessage(null)
+        dispatch(clearSuccessNotification())
       }, 5000)
     }
   }
@@ -132,14 +144,18 @@ const App = () => {
       setUsername('')
       setPassword('')
 
-      setSuccessMessage('Logged in successfully.')
+      // Lähetetään Redux-storeen ilmoituksen asettava action ja
+      // nollataan se alkuperäiseen tilaansa 5 sekunnin kuluttua.
+      dispatch(setSuccessNotification('Logged in successfully.'))
       setTimeout(() => {
-        setSuccessMessage(null)
+        dispatch(clearSuccessNotification())
       }, 5000)
     } catch (exception) {
-      setErrorMessage('Wrong username or password.')
+      // Lähetetään Redux-storeen virheilmoituksen asettava action ja
+      // nollataan se alkuperäiseen tilaansa 5 sekunnin kuluttua.
+      dispatch(setErrorNotification('Wrong username or password.'))
       setTimeout(() => {
-        setErrorMessage(null)
+        dispatch(clearErrorNotification())
       }, 5000)
     }
   }
@@ -208,8 +224,8 @@ const App = () => {
   return (
     <div>
       <h1>Blogs-application</h1>
-      <SuccessNotification message={successMessage} />
-      <ErrorNotification message={errorMessage} />
+      <SuccessNotification />
+      <ErrorNotification />
 
       {user === null && loginForm()}
       {user !== null && loggedInElement()}

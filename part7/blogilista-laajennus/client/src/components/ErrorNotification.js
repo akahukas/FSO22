@@ -1,4 +1,9 @@
-const ErrorNotification = ({ message }) => {
+import { useSelector } from 'react-redux'
+
+const ErrorNotification = () => {
+  // Haetaan Redux-storen tilasta ilmoituksen viesti.
+  const message = useSelector(state => state.errorNotification)
+
   if (message === null) {
     return null
   }
