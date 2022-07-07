@@ -17,11 +17,11 @@ import LoginForm from './components/LoginForm'
 import { setSuccessNotification, clearSuccessNotification } from './reducers/successNotificationReducer'
 import { setErrorNotification, clearErrorNotification } from './reducers/errorNotificationReducer'
 import { initializeBlogs, setBlogs, appendBlog } from './reducers/blogReducer'
+import { setUser, deleteUser } from './reducers/userReducer'
 
 const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
 
   // Käytetään actionien lähetyksessä Redux-storeen.
   const dispatch = useDispatch()
@@ -30,6 +30,9 @@ const App = () => {
   useEffect(() => {
     dispatch(initializeBlogs())
   }, [dispatch])
+
+  // Määritetään käyttäjä muuttujaan Redux-storen tilasta.
+  const user = useSelector(state => state.user)
 
   // Määritetään blogit muuttujaan Redux-storen tilasta.
   const blogs = useSelector(state => state.blogs)
@@ -49,7 +52,9 @@ const App = () => {
 
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
+
+      // Lähetetään Redux-storeen käyttäjän asettava action.
+      dispatch(setUser(user))
       blogService.setToken(user.token)
     }
   }, [])
@@ -150,7 +155,9 @@ const App = () => {
 
       window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
       blogService.setToken(user.token)
-      setUser(user)
+
+      // Lähetetään Redux-storeen käyttäjän asettava action.
+      dispatch(setUser(user))
       setUsername('')
       setPassword('')
 
@@ -176,6 +183,9 @@ const App = () => {
 
     try {
       window.localStorage.removeItem('loggedBlogAppUser')
+
+      // Lähetetään Redux-storeen käyttäjän poistava action.
+      dispatch(deleteUser())
     } catch (exception) {
       console.log('An error occurred while trying to log out.')
     }
