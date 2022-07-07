@@ -11,6 +11,10 @@
     {
       "content": "This is super cool!",
       "id": 3
+    },
+    {
+      "content": "Even better!",
+      "id": 4
     }
   ],
   "persons": [
@@ -28,6 +32,11 @@
       "name": "Mr. Tester",
       "number": "+123-456789",
       "id": 3
+    },
+    {
+      "name": "Saku",
+      "number": "456-456789",
+      "id": 4
     }
   ]
 }

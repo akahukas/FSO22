@@ -33,7 +33,7 @@ const useResource = (baseUrl) => {
   }
 
   // Suoritetaan effect-hook alussa.
-  useEffect(getAll, [])
+  useEffect(getAll, [baseUrl])
 
   const create = async (resource) => {
     const response = await axios.post(baseUrl, resource)
