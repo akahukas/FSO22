@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { Provider } from 'react-redux'
 import App from './App'
 import UsersList from './components/UsersList'
+import User from './components/User'
 import { store } from './store'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
@@ -17,6 +18,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <Routes>
         <Route path='/' element={<App />}/>
         <Route path='/users' element={<UsersList />} />
+        <Route path='/users/:id' element={<User />}/>
       </Routes>
     </Router>
   </Provider>

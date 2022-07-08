@@ -1,27 +1,26 @@
 // Hookit.
-import { useState, useEffect } from 'react'
-
-// Palvelut.
-import userService from '../services/users'
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
 // Komponentit.
 import LoggedInElement from './LoggedInElement'
+import { Link } from 'react-router-dom'
+
+// Reducerit.
+import { initializeUsers } from '../reducers/usersReducer'
 
 const UsersList = () => {
-  // Tallennetaan käyttäjät tilaan.
-  const [users, setUsers] = useState([])
+  // Hyödynnetään Redux-storeen lähetettävissä actioneissa.
+  const dispatch = useDispatch()
 
-  // Haetaan tietokannassa olevat käyttäjät, lajitellaan
-  // ne luotujen blogien määrän mukaiseen laskevaan
-  // suuruusjärjestykseen ja tallennetaan ne tilaan.
+  // Alustetaan tietokannassa olevat käyttäjät
+  // Redux-storen tilaan.
   useEffect(() => {
-    async function getUsers() {
-      const response = await userService.getAll()
-      setUsers(response.data.sort((user1, user2) =>
-        user2.blogs.length - user1.blogs.length))
-    }
-    getUsers()
-  }, [])
+    dispatch(initializeUsers())
+  }, [dispatch])
+
+  // Haetaan muuttujaan käyttäjät Redux-storen tilasta.
+  const users = useSelector(state => state.users)
 
   return (
     <div>
@@ -41,7 +40,7 @@ const UsersList = () => {
           <tbody>
             {users.map((user) => (
               <tr key={user.id}>
-                <td>{user.name}</td>
+                <td><Link to={`/users/${user.id}`}>{user.name}</Link></td>
                 <td>{user.blogs.length}</td>
               </tr>
             ))}
