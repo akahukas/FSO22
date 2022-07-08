@@ -12,12 +12,13 @@ import ErrorNotification from './components/ErrorNotification'
 import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
+import LoggedInElement from './components/LoggedInElement'
 
 // Hyödynnettävät reducerit.
 import { setSuccessNotification, clearSuccessNotification } from './reducers/successNotificationReducer'
 import { setErrorNotification, clearErrorNotification } from './reducers/errorNotificationReducer'
 import { initializeBlogs, setBlogs, appendBlog } from './reducers/blogReducer'
-import { setUser, deleteUser } from './reducers/userReducer'
+import { setUser } from './reducers/userReducer'
 
 const App = () => {
   const [username, setUsername] = useState('')
@@ -177,20 +178,6 @@ const App = () => {
     }
   }
 
-  // Käyttäjän uloskirjaamisesta vastuussa oleva tapahtumankäsittelijä.
-  const handleLogout = (event) => {
-    event.preventDefault()
-
-    try {
-      window.localStorage.removeItem('loggedBlogAppUser')
-
-      // Lähetetään Redux-storeen käyttäjän poistava action.
-      dispatch(deleteUser())
-    } catch (exception) {
-      console.log('An error occurred while trying to log out.')
-    }
-  }
-
   // Palauttaa kutsuttaessa kirjautumislomake-komponentin.
   const loginForm = () => (
     <LoginForm
@@ -201,22 +188,6 @@ const App = () => {
       setPassword={setPassword}
     />
   )
-
-  // Komponentti, joka näyttää sisäänkirjautuneen
-  // käyttäjän nimen ja uloskirjaamispainikkeen.
-  const loggedInElement = () => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
-    const name = JSON.parse(loggedUserJSON).name
-
-    return (
-      <div>
-        <p>Logged in as {name}.</p>
-        <button id="logoutButton" onClick={handleLogout}>
-          Logout
-        </button>
-      </div>
-    )
-  }
 
   // Palauttaa kutsuttaessa bloginluomis-komponentin.
   const blogForm = () => (
@@ -247,8 +218,10 @@ const App = () => {
       <SuccessNotification />
       <ErrorNotification />
 
-      {user === null && loginForm()}
-      {user !== null && loggedInElement()}
+      {user === null
+        ? loginForm()
+        : <LoggedInElement />
+      }
       {user !== null && blogForm()}
       {user !== null && bloglistElement()}
     </div>
