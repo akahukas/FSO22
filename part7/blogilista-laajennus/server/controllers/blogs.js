@@ -106,4 +106,28 @@ blogsRouter.put('/:id', async (request, response) => {
   response.json(returnedBlog)
 })
 
+// Route kommentin lisäämiseksi tietokannassa olevalle blogille.
+blogsRouter.post('/:id/comments', async (request, response) => {
+  const blog = new Blog(request.body)
+
+  // Luodaan uusi blogiolio pyynnön mukana tulleista tiedoista.
+  const updatedBlog = {
+    title: blog.title,
+    author: blog.author,
+    url: blog.url,
+    likes: blog.likes,
+    comments: blog.comments
+  }
+
+  // Haetaan tietokannasta pyynnön mukana tullutta id:tä vastaava
+  // blogiolio ja korvataan sen tiedot päivitetyllä oliolla.
+  const returnedBlog = await Blog.findByIdAndUpdate(
+    request.params.id,
+    updatedBlog,
+    { new: true }
+  )
+  // Vastataan päivitetyllä blogilla.
+  response.json(returnedBlog)
+})
+
 module.exports = blogsRouter

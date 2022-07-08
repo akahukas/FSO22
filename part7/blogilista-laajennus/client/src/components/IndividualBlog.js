@@ -99,6 +99,17 @@ const IndividualBlog = () => {
           Added by {matchedBlog.user.name}
         </div>
       </div>
+
+      <div>
+        <h3>Comments:</h3>
+        <ul>
+          {matchedBlog.comments.map((comment) => (
+            <li key={matchedBlog.comments.indexOf(comment)}>
+              {comment}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   )
 }
