@@ -1,8 +1,10 @@
-import { useState } from 'react'
+//import { useState } from 'react'
 import PropTypes from 'prop-types'
 
-const Blog = ({ blog, handleLike, checkCorrectUser, remove }) => {
-  const [minimized, setMinimized] = useState(true)
+import { Link } from 'react-router-dom'
+
+const Blog = ({ blog }) => {
+  /*const [minimized, setMinimized] = useState(true)
   const [removeVisible, setRemoveVisible] = useState(false)
 
   // Tallennetaan muuttujiin blogin sisällön ja <remove>-painikkeen näkyvyys.
@@ -21,7 +23,7 @@ const Blog = ({ blog, handleLike, checkCorrectUser, remove }) => {
     } else {
       setRemoveVisible(false)
     }
-  }
+  }*/
 
   const blogStyle = {
     border: 'solid',
@@ -29,7 +31,7 @@ const Blog = ({ blog, handleLike, checkCorrectUser, remove }) => {
     padding: 10,
     margin: 5,
   }
-
+  /*
   const buttonStyle = {
     backgroundColor: 'Crimson',
   }
@@ -44,15 +46,15 @@ const Blog = ({ blog, handleLike, checkCorrectUser, remove }) => {
       title: blog.title,
       url: blog.url,
     })
-  }
+  }*/
 
   return (
     <div className="blog" style={blogStyle}>
       <div className="titleAndAuthor">
         <span>
-          {blog.title} {blog.author}{' '}
+          <Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link>
         </span>
-        <button id="viewButton" onClick={toggleSize}>
+        {/*<button id="viewButton" onClick={toggleSize}>
           {minimized ? 'view' : 'hide'}
         </button>
       </div>
@@ -73,7 +75,7 @@ const Blog = ({ blog, handleLike, checkCorrectUser, remove }) => {
           >
             Remove
           </button>
-        </div>
+        </div>*/}
       </div>
     </div>
   )

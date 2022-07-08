@@ -1,6 +1,6 @@
 // Hookit.
 import { useSelector } from 'react-redux'
-import { useMatch } from 'react-router-dom'
+import { useMatch, Navigate } from 'react-router-dom'
 
 // Komponentit.
 import LoggedInElement from './LoggedInElement'
@@ -18,21 +18,12 @@ const User = () => {
     ? userById(match.params.id)
     : null
 
-  // Jos siirrytään suoraan käyttäjän sivulle,
-  // piirretään näytölle selitys tapahtuneesta.
+  // Jos sivu päivitetään tai sille siirrytään suoraan,
+  // siirretään käyttäjä kaikki käyttäjät listaavalle sivulle.
   if (!matchedUser) {
     return (
       <div>
-        <h1>Blogs-application</h1>
-        <LoggedInElement />
-
-        <br />
-
-        <p><strong>
-          Please return to the previous page and open
-          this user-view in the same tab.
-          Thank you.
-        </strong></p>
+        <Navigate replace to='/users' />
       </div>
     )
   }
