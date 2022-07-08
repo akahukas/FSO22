@@ -1,6 +1,7 @@
 // Hookit.
 import { useDispatch, useSelector } from 'react-redux'
 import { useMatch, Navigate } from 'react-router-dom'
+import { useField } from '../hooks'
 
 // Komponentit.
 import NavigationMenu from './NavigationMenu'
@@ -77,6 +78,41 @@ const IndividualBlog = () => {
     })
   }
 
+  // Erotetaan syöttökentän nollausfunktio sen muista toiminnoista.
+  const { reset: resetCommentValue, ...comment } = useField('text')
+
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+
+    // Lisätään syöttökentän arvo blogin kommenttien perälle.
+    const newComments = matchedBlog.comments.concat(comment.value)
+
+    // Lähetetään muokattu blogiolio tietokantaan.
+    await blogService.addComment(matchedBlog.id, {
+      user: matchedBlog.user.id,
+      likes: matchedBlog.likes,
+      author: matchedBlog.author,
+      title: matchedBlog.title,
+      url: matchedBlog.url,
+      comments: newComments,
+    })
+
+    // Tyhjennetään syöttökentän arvo.
+    resetCommentValue()
+
+    // Päivitetään tykkäykset.
+    renderBlogs()
+
+    // Lähetetään Redux-storeen ilmoituksen asettava action ja
+    // nollataan se alkuperäiseen tilaansa 5 sekunnin kuluttua.
+    dispatch(setSuccessNotification(
+      `Added a comment to blog ${matchedBlog.title} by ${matchedBlog.author}.`
+    ))
+    setTimeout(() => {
+      dispatch(clearSuccessNotification())
+    }, 5000)
+  }
+
   return (
     <div>
       <NavigationMenu />
@@ -102,6 +138,13 @@ const IndividualBlog = () => {
 
       <div>
         <h3>Comments:</h3>
+        <form onSubmit={handleSubmit}>
+          <div>
+            <input {...comment} />
+            <button type='submit' >Add comment</button>
+          </div>
+        </form>
+
         <ul>
           {matchedBlog.comments.map((comment) => (
             <li key={matchedBlog.comments.indexOf(comment)}>

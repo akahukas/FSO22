@@ -40,4 +40,11 @@ const remove = async (id) => {
   return response.data
 }
 
-export default { setToken, getAll, createNew, updateOld, remove }
+// Route kommentin lisäämiseksi ja tallentamiseksi jo tietokannassa olevaan blogiin.
+const addComment = async (id, newBlog) => {
+  const response = await axios.post(`${baseUrl}/${id}/comments`, newBlog)
+
+  return response.data
+}
+
+export default { setToken, getAll, createNew, updateOld, remove, addComment }
