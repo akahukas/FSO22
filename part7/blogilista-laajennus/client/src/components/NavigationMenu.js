@@ -1,12 +1,12 @@
 // Hookit.
 import { useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 
 // Reducerit.
 import { deleteUser } from '../reducers/userReducer'
 import { setSuccessNotification, clearSuccessNotification } from '../reducers/successNotificationReducer'
 
-const LoggedInElement = () => {
+const NavigationMenu = () => {
   // Hyödynnetään Redux-storeen lähetettävissä actioneissa.
   const dispatch = useDispatch()
 
@@ -44,14 +44,27 @@ const LoggedInElement = () => {
     }
   }
 
+  // Tyyliasetuksia.
+  const menuStyle = {
+    backgroundColor: 'lightgrey'
+  }
+
+  const padding = {
+    padding: 5
+  }
+
   return (
-    <div>
-      <p>Logged in as {name}.</p>
-      <button id="logoutButton" onClick={handleLogout}>
-        Logout
-      </button>
+    <div style={menuStyle}>
+      <div style={padding}>
+        <Link style={padding} to='/'>Blogs</Link>
+        <Link style={padding} to='/users'>Users</Link>
+      Logged in as {name}.{' '}
+        <button id="logoutButton" onClick={handleLogout}>
+          Logout
+        </button>
+      </div>
     </div>
   )
 }
 
-export default LoggedInElement
+export default NavigationMenu

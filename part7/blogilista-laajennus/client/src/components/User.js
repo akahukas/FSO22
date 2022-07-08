@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { useMatch, Navigate } from 'react-router-dom'
 
 // Komponentit.
-import LoggedInElement from './LoggedInElement'
+import NavigationMenu from './NavigationMenu'
 
 const User = () => {
   // Haetaan muuttujaan käyttäjät Redux-storen tilasta.
@@ -30,9 +30,9 @@ const User = () => {
 
   return (
     <div>
-      <h1>Blogs-application</h1>
+      <NavigationMenu />
 
-      <LoggedInElement />
+      <h1>Blogs-application</h1>
 
       <div>
         <h2>{matchedUser.name}</h2>

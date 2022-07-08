@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 // Komponentit.
-import LoggedInElement from './LoggedInElement'
+import NavigationMenu from './NavigationMenu'
 import { Link } from 'react-router-dom'
 
 // Reducerit.
@@ -24,9 +24,9 @@ const UsersList = () => {
 
   return (
     <div>
-      <h1>Blogs-application</h1>
+      <NavigationMenu />
 
-      <LoggedInElement />
+      <h1>Blogs-application</h1>
 
       <div key='UsersList'>
         <h2>Users</h2>

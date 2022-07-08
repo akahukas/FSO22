@@ -13,7 +13,7 @@ import ErrorNotification from './components/ErrorNotification'
 import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
-import LoggedInElement from './components/LoggedInElement'
+import NavigationMenu from './components/NavigationMenu'
 
 // Hyödynnettävät reducerit.
 import { setSuccessNotification, clearSuccessNotification } from './reducers/successNotificationReducer'
@@ -215,14 +215,13 @@ const App = () => {
 
   return (
     <div>
+      {user !== null && <NavigationMenu />}
+
       <h1>Blogs-application</h1>
       <SuccessNotification />
       <ErrorNotification />
 
-      {user === null
-        ? loginForm()
-        : <LoggedInElement />
-      }
+      {user === null && loginForm()}
       {user !== null && blogForm()}
       {user !== null && bloglistElement()}
     </div>

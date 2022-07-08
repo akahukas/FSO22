@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useMatch, Navigate } from 'react-router-dom'
 
 // Komponentit.
-import LoggedInElement from './LoggedInElement'
+import NavigationMenu from './NavigationMenu'
 import SuccessNotification from './SuccessNotification'
 
 // Palvelut.
@@ -79,10 +79,10 @@ const IndividualBlog = () => {
 
   return (
     <div>
+      <NavigationMenu />
+
       <h1>Blogs-application</h1>
       <SuccessNotification />
-
-      <LoggedInElement />
 
       <div>
         <h2>{matchedBlog.title} by {matchedBlog.author}</h2>
