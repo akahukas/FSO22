@@ -1,3 +1,6 @@
+// React-Bootstrap -komponentit.
+import { Form, Button, FloatingLabel } from 'react-bootstrap'
+
 import PropTypes from 'prop-types'
 
 const LoginForm = ({
@@ -9,34 +12,49 @@ const LoginForm = ({
 }) => {
   return (
     <div>
-      <h2>Log in to application:</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          Username
-          <input
-            id="username"
-            type="text"
-            value={username}
-            name="Username"
-            onChange={({ target }) => setUsername(target.value)}
-            required
-          />
-        </div>
-        <div>
-          Password
-          <input
-            id="password"
-            type="password"
-            value={password}
-            name="Password"
-            onChange={({ target }) => setPassword(target.value)}
-            required
-          />
-        </div>
-        <button id="loginButton" type="submit">
-          Login
-        </button>
-      </form>
+      <h1
+        style={{
+          color: 'white',
+        }}
+      >
+        Blogs-application
+      </h1>
+      <h2
+        style={{
+          color: 'white',
+        }}
+      >
+        Log in to application:
+      </h2>
+      <Form onSubmit={handleSubmit}>
+        <Form.Group>
+          <FloatingLabel label="Username" className="mb-3">
+            <Form.Control
+              id="username"
+              type="text"
+              value={username}
+              name="Username"
+              onChange={({ target }) => setUsername(target.value)}
+              required
+              placeholder="exampleUsername"
+            />
+          </FloatingLabel>
+          <FloatingLabel label="Password" className="mb-3">
+            <Form.Control
+              id="password"
+              type="password"
+              value={password}
+              name="Password"
+              onChange={({ target }) => setPassword(target.value)}
+              required
+              placeholder="examplePassword"
+            />
+          </FloatingLabel>
+          <Button variant="primary" id="loginButton" type="submit">
+            Login
+          </Button>
+        </Form.Group>
+      </Form>
     </div>
   )
 }

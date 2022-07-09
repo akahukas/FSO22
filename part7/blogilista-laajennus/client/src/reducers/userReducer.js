@@ -15,13 +15,10 @@ const userSlice = createSlice({
       state = null
 
       return state
-    }
-  }
+    },
+  },
 })
 
-export const {
-  setUser,
-  deleteUser
-} = userSlice.actions
+export const { setUser, deleteUser } = userSlice.actions
 
 export default userSlice.reducer

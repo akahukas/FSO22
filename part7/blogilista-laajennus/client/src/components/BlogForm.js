@@ -1,3 +1,7 @@
+// React-Bootstrap -komponentit.
+import { Form, Button, FloatingLabel } from 'react-bootstrap'
+
+// Hookit.
 import { useState } from 'react'
 
 const BlogForm = ({ createBlog }) => {
@@ -24,48 +28,53 @@ const BlogForm = ({ createBlog }) => {
 
   return (
     <div>
-      <h2>Create new blog:</h2>
-      <form onSubmit={addBlog}>
-        <div>
-          Title:
-          <input
-            id="title"
-            type="text"
-            value={title}
-            name="Title"
-            onChange={({ target }) => setTitle(target.value)}
-            placeholder="Example title"
-            required
-          />
-        </div>
-        <div>
-          Author:
-          <input
-            id="author"
-            type="text"
-            value={author}
-            name="Author"
-            onChange={({ target }) => setAuthor(target.value)}
-            placeholder="Example author"
-            required
-          />
-        </div>
-        <div>
-          Url:
-          <input
-            id="url"
-            type="url"
-            value={url}
-            name="Url"
-            onChange={({ target }) => setUrl(target.value)}
-            placeholder="Example Url"
-            required
-          />
-        </div>
-        <button id="createButton" type="submit">
-          Create
-        </button>
-      </form>
+      <h2
+        style={{
+          color: 'white',
+        }}
+      >
+        Create new blog:
+      </h2>
+      <Form onSubmit={addBlog}>
+        <Form.Group>
+          <FloatingLabel label="Title" className="mb-3">
+            <Form.Control
+              id="title"
+              type="text"
+              value={title}
+              name="Title"
+              onChange={({ target }) => setTitle(target.value)}
+              placeholder="Example title"
+              required
+            />
+          </FloatingLabel>
+          <FloatingLabel label="Author" className="mb-3">
+            <Form.Control
+              id="author"
+              type="text"
+              value={author}
+              name="Author"
+              onChange={({ target }) => setAuthor(target.value)}
+              placeholder="Example author"
+              required
+            />
+          </FloatingLabel>
+          <FloatingLabel label="Url" className="mb-3">
+            <Form.Control
+              id="url"
+              type="url"
+              value={url}
+              name="Url"
+              onChange={({ target }) => setUrl(target.value)}
+              placeholder="Example Url"
+              required
+            />
+          </FloatingLabel>
+          <Button id="createButton" type="submit">
+            Create
+          </Button>
+        </Form.Group>
+      </Form>
     </div>
   )
 }

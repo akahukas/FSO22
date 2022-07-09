@@ -9,9 +9,7 @@ const blogSlice = createSlice({
     sortBlogs(state) {
       // Palautetaan tila järjestettynä tykkäysten
       // määrän mukaiseen laskevaan suuruusjärjestykseen.
-      return state.sort(
-        ((blog1, blog2) => blog2.likes - blog1.likes)
-      )
+      return state.sort((blog1, blog2) => blog2.likes - blog1.likes)
     },
     // Yhden blogin lisäämisen action creator.
     appendBlog(state, action) {
@@ -21,20 +19,15 @@ const blogSlice = createSlice({
     // Anekdoottien korvaamisen/asettamisen action creator.
     setBlogs(state, action) {
       return action.payload
-    }
-  }
+    },
+  },
 })
 
-export const {
-  sortBlogs,
-  appendBlog,
-  setBlogs,
-} = blogSlice.actions
+export const { sortBlogs, appendBlog, setBlogs } = blogSlice.actions
 
 // Asynkroninen action anekdoottien alustamiseksi.
 export const initializeBlogs = () => {
-  return async dispatch => {
-
+  return async (dispatch) => {
     // Haetaan palvelimelle tallennetut blogit
     // ja tallennetaan ne Redux-storen tilaan.
     const blogs = await blogService.getAll()

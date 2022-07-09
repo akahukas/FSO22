@@ -18,13 +18,11 @@ const errorNotificationSlice = createSlice({
       state = null
 
       return state
-    }
-  }
+    },
+  },
 })
 
-export const {
-  setErrorNotification,
-  clearErrorNotification,
-} = errorNotificationSlice.actions
+export const { setErrorNotification, clearErrorNotification } =
+  errorNotificationSlice.actions
 
 export default errorNotificationSlice.reducer

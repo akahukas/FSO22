@@ -9,25 +9,22 @@ const usersSlice = createSlice({
     sortUsers(state) {
       // Palautetaan tila järjestettynä käyttäjien blogien
       // lukumäärän mukaiseen laskevaan suuruusjärjestykseen.
-      return state.sort((user1, user2) =>
-        user2.blogs.length - user1.blogs.length)
+      return state.sort(
+        (user1, user2) => user2.blogs.length - user1.blogs.length
+      )
     },
     // Käyttäjien asettamisen/korvaamisen action creator.
     setUsers(state, action) {
       return action.payload
-    }
-  }
+    },
+  },
 })
 
-export const {
-  sortUsers,
-  setUsers,
-} = usersSlice.actions
+export const { sortUsers, setUsers } = usersSlice.actions
 
 // Asynkroninen action käyttäjien alustamiseksi.
 export const initializeUsers = () => {
-  return async dispatch => {
-
+  return async (dispatch) => {
     // Haetaan palvelimelle tallennetut käyttäjät
     // ja tallennetaan ne Redux-storen tilaan.
     const response = await userService.getAll()

@@ -15,9 +15,18 @@ import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import NavigationMenu from './components/NavigationMenu'
 
+// React-Bootstrap -komponentit.
+import { Table } from 'react-bootstrap'
+
 // Hyödynnettävät reducerit.
-import { setSuccessNotification, clearSuccessNotification } from './reducers/successNotificationReducer'
-import { setErrorNotification, clearErrorNotification } from './reducers/errorNotificationReducer'
+import {
+  setSuccessNotification,
+  clearSuccessNotification,
+} from './reducers/successNotificationReducer'
+import {
+  setErrorNotification,
+  clearErrorNotification,
+} from './reducers/errorNotificationReducer'
 import { initializeBlogs, setBlogs, appendBlog } from './reducers/blogReducer'
 import { setUser } from './reducers/userReducer'
 
@@ -34,10 +43,10 @@ const App = () => {
   }, [dispatch])
 
   // Määritetään käyttäjä muuttujaan Redux-storen tilasta.
-  const user = useSelector(state => state.user)
+  const user = useSelector((state) => state.user)
 
   // Määritetään blogit muuttujaan Redux-storen tilasta.
-  const blogs = useSelector(state => state.blogs)
+  const blogs = useSelector((state) => state.blogs)
 
   // Viite BlogForm-komponenttiin.
   const blogFormRef = useRef()
@@ -67,7 +76,9 @@ const App = () => {
     const response = await blogService.getAll()
 
     // Lähetetään Redux-storeen blogit asettava action.
-    dispatch(setBlogs(response.sort((blog1, blog2) => blog2.likes - blog1.likes)))
+    dispatch(
+      setBlogs(response.sort((blog1, blog2) => blog2.likes - blog1.likes))
+    )
   }
 
   // Uuden blogin lisäämisestä huolehtiva tapahtumankäsittelijä.
@@ -84,9 +95,11 @@ const App = () => {
 
     // Lähetetään Redux-storeen ilmoituksen asettava action ja
     // nollataan se alkuperäiseen tilaansa 5 sekunnin kuluttua.
-    dispatch(setSuccessNotification(
-      `Added a new blog ${blogObject.title} by ${blogObject.author}.`
-    ))
+    dispatch(
+      setSuccessNotification(
+        `Added a new blog ${blogObject.title} by ${blogObject.author}.`
+      )
+    )
     setTimeout(() => {
       dispatch(clearSuccessNotification())
     }, 5000)
@@ -100,9 +113,11 @@ const App = () => {
 
     // Lähetetään Redux-storeen ilmoituksen asettava action ja
     // nollataan se alkuperäiseen tilaansa 5 sekunnin kuluttua.
-    dispatch(setSuccessNotification(
-      `Added a like to blog ${blogObject.title} by ${blogObject.author}.`
-    ))
+    dispatch(
+      setSuccessNotification(
+        `Added a like to blog ${blogObject.title} by ${blogObject.author}.`
+      )
+    )
     setTimeout(() => {
       dispatch(clearSuccessNotification())
     }, 5000)
@@ -136,9 +151,11 @@ const App = () => {
 
       // Lähetetään Redux-storeen ilmoituksen asettava action ja
       // nollataan se alkuperäiseen tilaansa 5 sekunnin kuluttua.
-      dispatch(setSuccessNotification(
-        `Blog ${blog.title} by ${blog.author} removed successfully.`
-      ))
+      dispatch(
+        setSuccessNotification(
+          `Blog ${blog.title} by ${blog.author} removed successfully.`
+        )
+      )
       setTimeout(() => {
         dispatch(clearSuccessNotification())
       }, 5000)
@@ -200,16 +217,26 @@ const App = () => {
   // Palauttaa kutsuttaessa komponentin, joka sisältää listan tietokannassa olevista blogeista.
   const bloglistElement = () => (
     <div id="blogList">
-      <h2>Blogs in database:</h2>
-      {blogs.map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          handleLike={addLike}
-          checkCorrectUser={isBlogCreatedByLoggedUser}
-          remove={removeBlog}
-        />
-      ))}
+      <h2
+        style={{
+          color: 'white',
+        }}
+      >
+        Blogs in database:
+      </h2>
+      <Table striped bordered variant="dark">
+        <tbody>
+          {blogs.map((blog) => (
+            <Blog
+              key={blog.id}
+              blog={blog}
+              handleLike={addLike}
+              checkCorrectUser={isBlogCreatedByLoggedUser}
+              remove={removeBlog}
+            />
+          ))}
+        </tbody>
+      </Table>
     </div>
   )
 
@@ -217,7 +244,6 @@ const App = () => {
     <div>
       {user !== null && <NavigationMenu />}
 
-      <h1>Blogs-application</h1>
       <SuccessNotification />
       <ErrorNotification />
 

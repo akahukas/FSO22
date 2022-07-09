@@ -18,13 +18,11 @@ const successNotificationSlice = createSlice({
       state = null
 
       return state
-    }
-  }
+    },
+  },
 })
 
-export const {
-  setSuccessNotification,
-  clearSuccessNotification,
-} = successNotificationSlice.actions
+export const { setSuccessNotification, clearSuccessNotification } =
+  successNotificationSlice.actions
 
 export default successNotificationSlice.reducer

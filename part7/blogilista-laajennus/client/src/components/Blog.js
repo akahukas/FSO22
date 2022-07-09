@@ -23,7 +23,7 @@ const Blog = ({ blog }) => {
     } else {
       setRemoveVisible(false)
     }
-  }*/
+  }
 
   const blogStyle = {
     border: 'solid',
@@ -31,7 +31,7 @@ const Blog = ({ blog }) => {
     padding: 10,
     margin: 5,
   }
-  /*
+
   const buttonStyle = {
     backgroundColor: 'Crimson',
   }
@@ -49,35 +49,35 @@ const Blog = ({ blog }) => {
   }*/
 
   return (
-    <div className="blog" style={blogStyle}>
-      <div className="titleAndAuthor">
-        <span>
-          <Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link>
-        </span>
-        {/*<button id="viewButton" onClick={toggleSize}>
-          {minimized ? 'view' : 'hide'}
-        </button>
-      </div>
-      <div style={hideWhenMinimized} className="urlAndLikes">
-        <p>{blog.url}</p>
-        <p id="likes">
-          likes {blog.likes}
-          <button id="likeButton" onClick={addLike}>
-            like
-          </button>
-        </p>
-        <p>{blog.user.name}</p>
-        <div style={showWhenCorrectUser}>
-          <button
-            id="removeButton"
-            style={buttonStyle}
-            onClick={() => remove(blog.id)}
-          >
-            Remove
-          </button>
-        </div>*/}
-      </div>
+    <tr key={blog.id} className="titleAndAuthor">
+      <td>
+        <Link to={`/blogs/${blog.id}`}>
+          {blog.title} {blog.author}
+        </Link>
+      </td>
+      {/*<button id="viewButton" onClick={toggleSize}>
+        {minimized ? 'view' : 'hide'}
+      </button>
     </div>
+    <div style={hideWhenMinimized} className="urlAndLikes">
+      <p>{blog.url}</p>
+      <p id="likes">
+        likes {blog.likes}
+        <button id="likeButton" onClick={addLike}>
+          like
+        </button>
+      </p>
+      <p>{blog.user.name}</p>
+      <div style={showWhenCorrectUser}>
+        <button
+          id="removeButton"
+          style={buttonStyle}
+          onClick={() => remove(blog.id)}
+        >
+          Remove
+        </button>
+      </div>*/}
+    </tr>
   )
 }
 

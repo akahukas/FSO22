@@ -14,14 +14,23 @@ import './index.css'
 // lapsille. Hyödynnetään Routeria routejen sekä niissä
 // näkyvien elementtien määrittämiseen.
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <Provider store={store}>
-    <Router>
-      <Routes>
-        <Route path='/' element={<App />}/>
-        <Route path='/users' element={<UsersList />} />
-        <Route path='/users/:id' element={<User />}/>
-        <Route path='/blogs/:id' element={<IndividualBlog />}/>
-      </Routes>
-    </Router>
-  </Provider>
+  <div
+    style={{
+      backgroundColor: '#0d3446',
+      minHeight: '100vh',
+    }}
+  >
+    <div className="container">
+      <Provider store={store}>
+        <Router>
+          <Routes>
+            <Route path="/" element={<App />} />
+            <Route path="/users" element={<UsersList />} />
+            <Route path="/users/:id" element={<User />} />
+            <Route path="/blogs/:id" element={<IndividualBlog />} />
+          </Routes>
+        </Router>
+      </Provider>
+    </div>
+  </div>
 )

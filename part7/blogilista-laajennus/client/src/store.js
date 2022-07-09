@@ -13,5 +13,5 @@ export const store = configureStore({
     users: usersReducer,
     successNotification: successNotificationReducer,
     errorNotification: errorNotificationReducer,
-  }
+  },
 })

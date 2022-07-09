@@ -6,6 +6,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import NavigationMenu from './NavigationMenu'
 import { Link } from 'react-router-dom'
 
+// React-Bootstrap -komponentit.
+import { Container, Table } from 'react-bootstrap'
+
 // Reducerit.
 import { initializeUsers } from '../reducers/usersReducer'
 
@@ -20,33 +23,40 @@ const UsersList = () => {
   }, [dispatch])
 
   // Haetaan muuttujaan käyttäjät Redux-storen tilasta.
-  const users = useSelector(state => state.users)
+  const users = useSelector((state) => state.users)
 
   return (
     <div>
       <NavigationMenu />
 
-      <h1>Blogs-application</h1>
-
-      <div key='UsersList'>
-        <h2>Users</h2>
-        <table>
+      <Container key="UsersList">
+        <h2
+          style={{
+            color: 'white',
+            padding: '10px',
+          }}
+        >
+          Users
+        </h2>
+        <Table striped bordered variant="dark">
           <thead>
             <tr>
-              <th></th>
+              <th>Name</th>
               <th>blogs created</th>
             </tr>
           </thead>
           <tbody>
             {users.map((user) => (
               <tr key={user.id}>
-                <td><Link to={`/users/${user.id}`}>{user.name}</Link></td>
+                <td>
+                  <Link to={`/users/${user.id}`}>{user.name}</Link>
+                </td>
                 <td>{user.blogs.length}</td>
               </tr>
             ))}
           </tbody>
-        </table>
-      </div>
+        </Table>
+      </Container>
     </div>
   )
 }

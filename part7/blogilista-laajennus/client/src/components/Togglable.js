@@ -1,4 +1,9 @@
+// React-Bootstrap -komponentit.
+import { Button } from 'react-bootstrap'
+
+// Hookit.
 import { useState, useImperativeHandle, forwardRef } from 'react'
+
 import PropTypes from 'prop-types'
 
 const Togglable = forwardRef((props, ref) => {
@@ -20,13 +25,19 @@ const Togglable = forwardRef((props, ref) => {
   return (
     <div>
       <div style={hideWhenVisible}>
-        <button id="togglableButton" onClick={toggleVisibility}>
+        <Button
+          id="togglableButton"
+          onClick={toggleVisibility}
+          className="my-3"
+        >
           {props.buttonLabel}
-        </button>
+        </Button>
       </div>
       <div style={showWhenVisible}>
         {props.children}
-        <button onClick={toggleVisibility}>Cancel</button>
+        <Button onClick={toggleVisibility} className="my-3">
+          Cancel
+        </Button>
       </div>
     </div>
   )
