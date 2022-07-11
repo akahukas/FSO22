@@ -1,0 +1,15 @@
+{
+  "name": "kirjasto-backend",
+  "version": "0.0.1",
+  "description": "library backend offering GraphQL",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Saku Hakamäki",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server": "^3.9.0",
+    "graphql": "^16.5.0"
+  }
+}
