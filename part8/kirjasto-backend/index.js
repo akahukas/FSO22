@@ -1,4 +1,5 @@
 const { ApolloServer, gql } = require('apollo-server')
+const { v1: uuid } = require('uuid')
 
 let authors = [
   {
@@ -112,6 +113,15 @@ const typeDefs = gql`
     allBooks(author: String, genre: String): [Book!]!
     allAuthors: [Author!]!
   }
+
+  type Mutation {
+    addBook(
+      title: String!
+      published: Int!
+      author: String!
+      genres: [String!]!
+    ): Book
+  }
 `
 
 // Resolverit eli miten kyselyihin vastataan.
@@ -160,6 +170,38 @@ const resolvers = {
     bookCount: (root) => (
       books.filter((book) => book.author === root.name).length
     )
+  },
+  Mutation: {
+    addBook: (root, args) => {
+
+      // Tallennetaan taulukkoon kaikkien
+      // tiedossa olevien kirjailijoiden nimet.
+      const authorNames = authors.map((author) => author.name)
+
+      // Jos parametrina saatu kirjailija ei ole
+      // tiedossa, lisätään hänet järjestelmään.
+      if (!authorNames.includes(args.author)) {
+        
+        // Luodaan kirjailijaolio; nimi annettu parametreissa,
+        // syntymävuodesta ei tietoa. Lisäksi määritetään uniikki id.
+        const author = {
+          name: args.author,
+          id: uuid(),
+          born: null
+        }
+        // Lisätään luotu olio kirjailijoiden perälle.
+        authors = authors.concat(author)
+      }
+
+      // Luodaan uusi kirjaolio parametreina saaduista
+      // arvoista, sekä annetaan lisäksi uniikki id.
+      const book = { ...args, id: uuid() }
+
+      // Lisätään luotu olio kirjojen perälle,
+      // ja palautetaan luotu kirja.
+      books = books.concat(book)
+      return book
+    }
   }
 }
 
