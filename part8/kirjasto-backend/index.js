@@ -121,6 +121,11 @@ const typeDefs = gql`
       author: String!
       genres: [String!]!
     ): Book
+
+    editAuthor(
+      name: String!
+      setBornTo: Int!
+    ): Author
   }
 `
 
@@ -201,6 +206,35 @@ const resolvers = {
       // ja palautetaan luotu kirja.
       books = books.concat(book)
       return book
+    },
+    editAuthor: (root, args) => {
+
+      // Haetaan tiedettyjen kirjailijoiden joukosta parametrina
+      // saatua nimeä vastaava kirjailija jos sellainen on olemassa.
+      const correctAuthor = authors.find((author) => author.name === args.name)
+
+      // Jos vastaavaa kirjailijaa
+      // ei löydy, palautetaan null.
+      if (!correctAuthor) {
+        return null
+      }
+      
+      // Luodaan muokattu kirjailijaolio, kopioidaan muut kentät
+      // paitsi syntymävuosi, jolle asetetaan parametreissa annettu arvo.
+      const modifiedAuthor = {
+        ...correctAuthor,
+        born: args.setBornTo
+      }
+
+      // Korvataan järjestelmässä alkuperäinen kirjailija,
+      // muokatulla versiolla. Muut oliot säilyvät ennallaan.
+      authors = authors.map((author) => author.name === args.name
+        ? modifiedAuthor
+        : author
+      )
+
+      // Palautetaan muokattu olio.
+      return modifiedAuthor
     }
   }
 }
