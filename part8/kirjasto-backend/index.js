@@ -109,7 +109,7 @@ const typeDefs = gql`
   type Query {
     bookCount: Int!
     authorCount: Int!
-    allBooks(author: String): [Book!]!
+    allBooks(author: String, genre: String): [Book!]!
     allAuthors: [Author!]!
   }
 `
@@ -123,14 +123,36 @@ const resolvers = {
       
       // Jos kirjailijaa ei annettu
       // parametrina, palautetaan kaikki kirjat.
-      if (args.author === undefined) {
+      if (!args.author && !args.genre) {
         return books
       }
+      // Jos parametrina annettu vain kirjailija,
+      // palautetaan kyseisen kirjailijan kirjoittamat kirjat.
+      else if (!args.genre) {
+        return books.filter((book) => book.author === args.author)
+      }
+      // Jos parametrina on annettu vain genre,
+      // palautetaan kyseistä genreä olevat kirjat.
+      else if (!args.author) {
+        return books.filter((book) =>
+          book.genres.includes(args.genre)
+        )
+      }
+      // Jos parametrina annettu sekä kirjailija että genre,
+      // palautetaan kirjat, jotka täyttävät kummankin ehdon.
+      else if (args.author && args.genre) {
 
-      // Muussa tapauksessa suodatetaan kirjoista ne, joissa
-      // kirjailija vastaa parametrina annettua nimeä.
-      return books.filter((book) => book.author === args.author)
-
+        // Haetaan kaikki parametrina saadun
+        // kirjailijan kirjoittamat kirjat.
+        const booksByCorrectAuthor = books.filter(
+          (book) => book.author === args.author
+        )
+        // Palautetaan edelläm määritetyistä kirjoista vain ne,
+        // jotka vastaavat parametrina saatua genreä.
+        return booksByCorrectAuthor.filter((book) =>
+          book.genres.includes(args.genre)
+        )
+      }
     },
     allAuthors: () => authors,
   },
