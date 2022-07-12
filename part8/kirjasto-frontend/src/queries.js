@@ -42,3 +42,11 @@ export const SET_BIRTHYEAR = gql`
     }
   }
 `
+
+export const ALL_AUTHOR_NAMES = gql`
+  query {
+    allAuthors {
+      name
+    }
+  }
+`

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 
-import { useMutation } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 
-import { ALL_AUTHORS, SET_BIRTHYEAR } from '../queries'
+import { ALL_AUTHORS, ALL_AUTHOR_NAMES, SET_BIRTHYEAR } from '../queries'
 
 const BirthyearForm = ({ show, setError }) => {
   const [ name, setName ] = useState('')
@@ -15,6 +15,9 @@ const BirthyearForm = ({ show, setError }) => {
       { query: ALL_AUTHORS },
     ]
   })
+
+  // Kysytään palvelimelta kaikkien tiedossa olevien kirjailijoiden nimet.
+  const resultAuthors = useQuery(ALL_AUTHOR_NAMES)
 
   const submit = async (event) => {
     event.preventDefault()
@@ -39,18 +42,34 @@ const BirthyearForm = ({ show, setError }) => {
     return null
   }
 
+  // Jos kyselyyn ei ole vielä vastattu.
+  if (resultAuthors.loading) {
+    return (
+      <div>
+        loading...
+      </div>
+    )
+  }
+
+  // Tallennetaan muuttujaan saatu vastaus kyselyyn.
+  const authorNames = resultAuthors.data.allAuthors
+
   return (
     <div>
       <h2>Set birthyear:</h2>
 
       <form onSubmit={submit}>
         <div>
-          name
-          <input
+          <select
             value={name}
             onChange={({target}) => setName(target.value)}
-            required
-          />
+          >
+            {authorNames.map((author) => (
+              <option key={author.name} value={author.name}>
+                {author.name}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
           born
