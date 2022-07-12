@@ -1,9 +1,25 @@
+import { useQuery } from '@apollo/client'
+
+import { ALL_BOOKS } from '../queries'
+
 const Books = (props) => {
+  // Tehdään kysely palvelimelle.
+  const result = useQuery(ALL_BOOKS)
+
   if (!props.show) {
     return null
   }
+  // Jos kyselyyn ei ole vielä vastattu.
+  else if(result.loading) {
+    return (
+      <div>
+        loading...
+      </div>
+    )
+  }
 
-  const books = []
+  // Tallennetaan muuttujaan saatu vastaus kyselyyn.
+  const books = result.data.allBooks
 
   return (
     <div>
