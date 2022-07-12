@@ -73,21 +73,25 @@ const resolvers = {
     bookCount: async () => Book.collection.countDocuments(),
     authorCount: async () => Author.collection.countDocuments(),
     allBooks: async (root, args) => {
+
+      // Haetaan tietokannasta kaikki kirjat ja
+      // korvataan kirjailijan tunniste sen tiedoilla.
+      const populatedBooks = await Book.find({}).populate('author')
       
       // Jos kirjailijaa ei annettu
       // parametrina, palautetaan kaikki kirjat.
       if (!args.author && !args.genre) {
-        return Book.find({})
+        return populatedBooks
       }
       // Jos parametrina annettu vain kirjailija,
       // palautetaan kyseisen kirjailijan kirjoittamat kirjat.
       else if (!args.genre) {
-        return books.filter((book) => book.author === args.author)
+        return populatedBooks.filter((book) => book.author.name === args.author)
       }
       // Jos parametrina on annettu vain genre,
       // palautetaan kyseistä genreä olevat kirjat.
       else if (!args.author) {
-        return books.filter((book) =>
+        return populatedBooks.filter((book) =>
           book.genres.includes(args.genre)
         )
       }
@@ -97,10 +101,10 @@ const resolvers = {
 
         // Haetaan kaikki parametrina saadun
         // kirjailijan kirjoittamat kirjat.
-        const booksByCorrectAuthor = books.filter(
-          (book) => book.author === args.author
+        const booksByCorrectAuthor = populatedBooks.filter(
+          (book) => book.author.name === args.author
         )
-        // Palautetaan edelläm määritetyistä kirjoista vain ne,
+        // Palautetaan edellä määritetyistä kirjoista vain ne,
         // jotka vastaavat parametrina saatua genreä.
         return booksByCorrectAuthor.filter((book) =>
           book.genres.includes(args.genre)
@@ -110,9 +114,14 @@ const resolvers = {
     allAuthors: async () => Author.find({}),
   },
   Author: {
-    bookCount: (root) => (
-      books.filter((book) => book.author === root.name).length
-    )
+    bookCount: async (root) => {
+      // Haetaan tietokannasta ne kirjat, joiden kirjailijan tunniste
+      // vastaa parametrissa <root>-olevan kirjailijan tunnistetta.
+      const suitableBooks = await Book.find({ author: { $in: [ root._id ]}})
+
+      // Palautetaan löytyneiden kirjojen kappalemäärä.
+      return suitableBooks.length
+    }
   },
   Mutation: {
     addBook: async (root, args) => {
@@ -161,11 +170,11 @@ const resolvers = {
         })
       }
     },
-    editAuthor: (root, args) => {
+    editAuthor: async (root, args) => {
 
-      // Haetaan tiedettyjen kirjailijoiden joukosta parametrina
+      // Haetaan tietokannan kirjailijoiden joukosta parametrina
       // saatua nimeä vastaava kirjailija jos sellainen on olemassa.
-      const correctAuthor = authors.find((author) => author.name === args.name)
+      const correctAuthor = await Author.findOne({name: args.name})
 
       // Jos vastaavaa kirjailijaa
       // ei löydy, palautetaan null.
@@ -173,22 +182,20 @@ const resolvers = {
         return null
       }
       
-      // Luodaan muokattu kirjailijaolio, kopioidaan muut kentät
-      // paitsi syntymävuosi, jolle asetetaan parametreissa annettu arvo.
-      const modifiedAuthor = {
-        ...correctAuthor,
-        born: args.setBornTo
+      // Asetetaan kirjailijan syntymävuoden
+      // kenttään parametreina saatu syntymävuosi.
+      correctAuthor.born = args.setBornTo
+
+      // Yritetään muokatun kirjailijan tallentamista tietokantaan.
+      try {
+        return correctAuthor.save()
       }
-
-      // Korvataan järjestelmässä alkuperäinen kirjailija,
-      // muokatulla versiolla. Muut oliot säilyvät ennallaan.
-      authors = authors.map((author) => author.name === args.name
-        ? modifiedAuthor
-        : author
-      )
-
-      // Palautetaan muokattu olio.
-      return modifiedAuthor
+      // Virheen sattuessa heitetään virhe.
+      catch (error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args,
+        })
+      }
     }
   }
 }
