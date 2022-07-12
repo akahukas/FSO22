@@ -1,11 +1,24 @@
 import { useState } from 'react'
 
+import { useMutation } from '@apollo/client'
+
+import { ALL_AUTHORS, ALL_BOOKS, CREATE_BOOK } from '../queries'
+
 const NewBook = (props) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [published, setPublished] = useState('')
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
+
+  // Määritetään mutaatio muuttujaan, sekä lisätään
+  // kyselyt tehtäväksi uudelleen mutaation yhteydessä.
+  const [ createBook ] = useMutation(CREATE_BOOK, {
+    refetchQueries: [
+      { query: ALL_AUTHORS },
+      { query: ALL_BOOKS },
+    ]
+  })
 
   if (!props.show) {
     return null
@@ -14,7 +27,11 @@ const NewBook = (props) => {
   const submit = async (event) => {
     event.preventDefault()
 
-    console.log('add book...')
+    // Muutetaan julkaisuvuosi merkkijonosta kokonaisluvuksi.
+    const publishedInt = parseInt(published)
+
+    // Käytetään mutaatiota, annetaan arvot sille muuttujien arvoina.
+    createBook({variables: { title, author, publishedInt, genres } })
 
     setTitle('')
     setPublished('')
@@ -36,6 +53,7 @@ const NewBook = (props) => {
           <input
             value={title}
             onChange={({ target }) => setTitle(target.value)}
+            required
           />
         </div>
         <div>
@@ -43,6 +61,7 @@ const NewBook = (props) => {
           <input
             value={author}
             onChange={({ target }) => setAuthor(target.value)}
+            required
           />
         </div>
         <div>
@@ -51,6 +70,7 @@ const NewBook = (props) => {
             type="number"
             value={published}
             onChange={({ target }) => setPublished(target.value)}
+            required
           />
         </div>
         <div>
