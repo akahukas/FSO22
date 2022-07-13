@@ -10,6 +10,7 @@ require('dotenv').config()
 
 const Author = require('./models/author')
 const Book = require('./models/book')
+const User = require('./models/user')
 
 const MONGODB_URI = process.env.MONGODB_URI
 
@@ -26,6 +27,10 @@ mongoose.connect(MONGODB_URI)
       error.message
     )
   })
+
+const jwt = require('jsonwebtoken')
+
+const JWT_SECRET = process.env.SECRET
 
 // Skeemat eli sovelluksen datan muotoilun 
 // määrittely clientin ja palvelimen välillä.
@@ -45,11 +50,22 @@ const typeDefs = gql`
     genres: [String!]!
   }
 
+  type User {
+    username: String!
+    favoriteGenre: String!
+    id: ID!
+  }
+
+  type Token {
+    value: String!
+  }
+
   type Query {
     bookCount: Int!
     authorCount: Int!
     allBooks(author: String, genre: String): [Book!]!
     allAuthors: [Author!]!
+    me: User
   }
 
   type Mutation {
@@ -64,6 +80,16 @@ const typeDefs = gql`
       name: String!
       setBornTo: Int!
     ): Author
+
+    createUser(
+      username: String!
+      favoriteGenre: String!
+    ): User
+
+    login(
+      username: String!
+      password: String!
+    ): Token
   }
 `
 
@@ -112,6 +138,9 @@ const resolvers = {
       }
     },
     allAuthors: async () => Author.find({}),
+    me: (root, args, context) => {
+      return context.currentUser
+    },
   },
   Author: {
     bookCount: async (root) => {
@@ -124,7 +153,15 @@ const resolvers = {
     }
   },
   Mutation: {
-    addBook: async (root, args) => {
+    addBook: async (root, args, context) => {
+
+      // Tarkistetaan onko käyttäjä kirjautuneena.
+      const currentUser = context.currentUser
+
+      // Jos kirjautunutta käyttäjää ei löydy, heitetään virhe.
+      if (!currentUser) {
+        throw new AuthenticationError('Unauthenticated.')
+      }
 
       // Tarkistetaan tietokannasta, onko parametrina
       // saatua nimeä vastaava kirjailija jo olemassa.
@@ -171,7 +208,15 @@ const resolvers = {
         })
       }
     },
-    editAuthor: async (root, args) => {
+    editAuthor: async (root, args, context) => {
+
+      // Tarkistetaan onko käyttäjä kirjautuneena.
+      const currentUser = context.currentUser
+
+      // Jos kirjautunutta käyttäjää ei löydy, heitetään virhe.
+      if (!currentUser) {
+        throw new AuthenticationError('Unauthenticated.')
+      }
 
       // Haetaan tietokannan kirjailijoiden joukosta parametrina
       // saatua nimeä vastaava kirjailija jos sellainen on olemassa.
@@ -198,13 +243,77 @@ const resolvers = {
           invalidArgs: args,
         })
       }
-    }
+    },
+    createUser: async (root, args) => {
+
+      // Luodaan uusi käyttäjäolio.
+      const newUser = new User({
+        username: args.username,
+        favoriteGenre: args.favoriteGenre
+      })
+
+      // Yritetään luodun olion tallentamista tietokantaan.
+      try {
+        const returnedUser = await newUser.save()
+        return returnedUser
+      }
+      // Heitetään virhe tallentamisen epäonnistuessa.
+      catch (error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args,
+        })
+      }
+    },
+    login: async (root, args) => {
+
+      // Tarkistetaan löytyykö tietokannasta jo käyttäjäää,
+      // joka vastaa parametreina saatua käyttäjätunnusta.
+      const correctUser = await User.findOne({
+        username: args.username
+      })
+
+      // Jos käyttäjää ei löydy tai salasana on
+      // virheellinen, heitetään virhe.
+      if ( !correctUser || args.password !== 'salainen' ) {
+        throw new UserInputError('Wrong username or password.')
+      }
+
+      // Luodaan käyttäjälle allerkirjoitettu
+      // Token-merkkijono, joka myös palautetaan.
+      const userForToken = {
+        username: correctUser.username,
+        id: correctUser._id,
+      }
+
+      return { value: jwt.sign(userForToken, JWT_SECRET) }
+    },
   }
 }
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  context: async ({ req }) => {
+
+    // Tarkistetaan, saatiinko pyynnön mukana Tokenia.
+    const authorization = req
+      ? req.headers.authorization
+      : null
+
+    // Jos Token vastaanotettiin ja sen alku
+    // on oikeaa muotoa, varmistetaan sen kelvollisuus.
+    if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+      const decodedToken = jwt.verify(
+        authorization.substring(7), JWT_SECRET
+      )
+      
+      // Haetaan tietokannasta Tokenin tunnistetta vastaava
+      // käyttäjä ja määritetään se contextin currentUser -kenttään.
+      const currentUser = await User.findById(decodedToken.id)
+
+      return { currentUser }
+    }
+  }
 })
 
 server.listen().then(({ url }) => {
