@@ -161,7 +161,8 @@ const resolvers = {
 
       // Yritetään kirjan tallentamista tietokantaan.
       try {
-        return book.save()
+        const returnedBook = await book.save()
+        return returnedBook
       }
       // Virheen sattuessa heitetään virhe.
       catch (error) {
@@ -188,7 +189,8 @@ const resolvers = {
 
       // Yritetään muokatun kirjailijan tallentamista tietokantaan.
       try {
-        return correctAuthor.save()
+        const modifiedAuthor = await correctAuthor.save()
+        return modifiedAuthor
       }
       // Virheen sattuessa heitetään virhe.
       catch (error) {
