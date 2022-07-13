@@ -23,7 +23,7 @@ export const ALL_BOOKS = gql`
 `
 
 export const ALL_BOOKS_GENRE = gql`
-  query allFromGenre($genreFilter: String!) {
+  query allFromGenre($genreFilter: String) {
     allBooks(genre: $genreFilter) {
       title
       author {
