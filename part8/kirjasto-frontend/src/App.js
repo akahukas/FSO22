@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useApolloClient } from '@apollo/client'
+import { useSubscription, useApolloClient } from '@apollo/client'
 import Authors from './components/Authors'
 import BirthyearForm from './components/BirthyearForm'
 import Books from './components/Books'
@@ -7,12 +7,28 @@ import LoginForm from './components/LoginForm'
 import NewBook from './components/NewBook'
 import Notify from './components/Notify'
 import RecommendedBooks from './components/RecommendedBooks'
+import { BOOK_ADDED } from './queries'
 
 const App = () => {
   const [page, setPage] = useState('authors')
   const [errorMessage, setErrorMessage] = useState(null)
   const [token, setToken] = useState(null)
   const client = useApolloClient()
+
+  // Hyödynnetään tilauksen mukana saatua dataa.
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      const book = subscriptionData.data.bookAdded
+      window.alert(
+        `
+        Received a new response from bookAdded-subscription.
+        A new book has been added with the following data:
+        Book title: ${book.title}
+        Book author: ${book.author.name}
+        `
+      )
+    }
+  })
 
   const notify = (message) => {
     setErrorMessage(message)
