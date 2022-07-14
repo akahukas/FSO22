@@ -6,31 +6,32 @@
 
 #### My task submissions related to [Full Stack Open -course](https://fullstackopen.com/) offered by University of Helsinki.
 
-#### As of Saturday the 9th of July 2022:
+#### As of Thursday the 14th of July 2022:
 
-- Part 0 --> Submitted.
-- Part 1 --> Submitted.
-- Part 2 --> Submitted.
-- Part 3 --> Submitted.
-- Part 4 --> Submitted.
-- Part 5 --> Submitted.
-- Part 6 --> Submitted.
-- Part 7 --> Submitted.
-- Part 8 --> Work in progress.
-- Part 9 --> To Be Started.
-- Part 10 --> To Be Started.
-- Part 11 --> To Be Started.
-- Part 12 --> To Be Started.
-- Part 13 --> To Be Started.
+|         Name         | Part(s) | ECTS |      Status       |
+| :------------------: | :-----: | :--: | :---------------: |
+|   The Core Course    |   0-7   |  7   |    Submitted.     |
+|       GraphQL        |    8    |  1   |    Submitted.     |
+|      TypeScript      |    9    |  1   | Work in progress. |
+|     React Native     |   10    |  2   |  To Be Started.   |
+|       CI / CD        |   11    |  1   |  To Be Started.   |
+|      Containers      |   12    |  1   |  To Be Started.   |
+| Relational Databases |   13    |  1   |  To Be Started.   |
 
 ---
 
-## (WIP) Certificate:
+## Certificates:
 
-#### [In Finnish](https://studies.cs.helsinki.fi/stats/api/certificate/fullstackopen/fi/122092c03b33db3f5819db60d3e5adc4)
+### The Core Course:
 
-#### [In English](https://studies.cs.helsinki.fi/stats/api/certificate/fullstackopen/en/122092c03b33db3f5819db60d3e5adc4)
+#### Certificate in [English](https://studies.cs.helsinki.fi/stats/api/certificate/fullstackopen/en/122092c03b33db3f5819db60d3e5adc4) or in [Finnish](https://studies.cs.helsinki.fi/stats/api/certificate/fullstackopen/fi/122092c03b33db3f5819db60d3e5adc4).
 
-![Certificate in English](./certificate-fullstack-en.png)
+![The Core Course certificate in English](./certificate-fullstack-en.png)
+
+### GraphQL
+
+#### Certificate in [English](https://studies.cs.helsinki.fi/stats/api/certificate/fs-graphql/en/6eb1590e38874b12b7cdf84520b9071a).
+
+![GraphQL certificate in English](./certificate-graphql.png)
 
 ---
