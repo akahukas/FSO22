@@ -1,4 +1,8 @@
 const { UserInputError, AuthenticationError } = require('apollo-server')
+
+const { PubSub } = require('graphql-subscriptions')
+const pubsub = new PubSub()
+
 const jwt = require('jsonwebtoken')
 
 require('dotenv').config()
@@ -114,8 +118,7 @@ const resolvers = {
 
       // Yritetään kirjan tallentamista tietokantaan.
       try {
-        const returnedBook = await book.save()
-        return returnedBook
+        await book.save()
       }
       // Virheen sattuessa heitetään virhe.
       catch (error) {
@@ -123,6 +126,10 @@ const resolvers = {
           invalidArgs: args,
         })
       }
+
+      pubsub.publish('BOOK_ADDED', { bookAdded: book })
+
+      return book
     },
     editAuthor: async (root, args, context) => {
 
@@ -203,7 +210,12 @@ const resolvers = {
 
       return { value: jwt.sign(userForToken, JWT_SECRET) }
     },
-  }
+  },
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterator(['BOOK_ADDED'])
+    },
+  },
 }
 
 module.exports = resolvers
