@@ -7,7 +7,25 @@ import LoginForm from './components/LoginForm'
 import NewBook from './components/NewBook'
 import Notify from './components/Notify'
 import RecommendedBooks from './components/RecommendedBooks'
-import { BOOK_ADDED } from './queries'
+import { ALL_BOOKS, BOOK_ADDED } from './queries'
+
+// Funktio joka vastaa välimuistin manipuloinnista.
+export const updateCache = (cache, query, addedBook) => {
+  const uniqueByName = (a) => {
+    let seen = new Set()
+    return a.filter((item) => {
+      let k = item.name
+      return seen.has(k)
+        ? false
+        :seen.add(k)
+    })
+  }
+  cache.updateQuery(query, ({ allBooks }) => {
+    return {
+      allBooks: uniqueByName(allBooks.concat(addedBook))
+    }
+  })
+}
 
 const App = () => {
   const [page, setPage] = useState('authors')
@@ -18,15 +36,16 @@ const App = () => {
   // Hyödynnetään tilauksen mukana saatua dataa.
   useSubscription(BOOK_ADDED, {
     onSubscriptionData: ({ subscriptionData }) => {
-      const book = subscriptionData.data.bookAdded
+      const addedBook = subscriptionData.data.bookAdded
       window.alert(
         `
         Received a new response from bookAdded-subscription.
         A new book has been added with the following data:
-        Book title: ${book.title}
-        Book author: ${book.author.name}
+        Book title: ${addedBook.title}
+        Book author: ${addedBook.author.name}
         `
       )
+      updateCache(client.cache, { query: ALL_BOOKS }, addedBook)
     }
   })
 
