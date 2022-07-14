@@ -66,11 +66,21 @@ const resolvers = {
     bookCount: async (root) => {
       // Haetaan tietokannasta ne kirjat, joiden kirjailijan tunniste
       // vastaa parametrissa <root>-olevan kirjailijan tunnistetta.
-      const suitableBooks = await Book.find({ author: { $in: [ root._id ]}})
+      const suitableBooks = await Book.find({ author: { $in: [ root.id ]}})
 
       // Palautetaan löytyneiden kirjojen kappalemäärä.
       return suitableBooks.length
     }
+  },
+  Book: {
+    author: (root) => {
+      return {
+        name: root.author.name,
+        id: root.author.id,
+        born: root.author.born,
+        bookCount: root.author.bookCount,
+      }
+    },
   },
   Mutation: {
     addBook: async (root, args, context) => {
@@ -127,9 +137,13 @@ const resolvers = {
         })
       }
 
-      pubsub.publish('BOOK_ADDED', { bookAdded: book })
+      // Haetaan tietokannasta juuri tallennettu
+      // kirja, ja populoidaan kirjailijan kenttä.
+      const populatedBook = await Book.findOne({ title: book.title }).populate('author')
 
-      return book
+      pubsub.publish('BOOK_ADDED', { bookAdded: populatedBook })
+
+      return populatedBook
     },
     editAuthor: async (root, args, context) => {
 
