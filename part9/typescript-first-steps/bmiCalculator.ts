@@ -11,11 +11,11 @@ const parseBmiArguments = (args: Array<string>): BmiValues => {
     return {
       height: Number(args[2]),
       mass: Number(args[3])
-    }
+    };
   } else {
-    throw new Error('Provided values were not numbers!')
+    throw new Error('Provided values were not numbers!');
   }
-}
+};
 
 export const calculateBmi = (height: number, mass: number): string => {
   const heightInMeters = height / 100;

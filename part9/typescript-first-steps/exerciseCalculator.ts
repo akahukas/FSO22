@@ -3,35 +3,37 @@ interface ExerciseValues {
   targetValue: number;
 }
 
-const parseExerciseArguments = (args: Array<string>): any => {
+const parseExerciseArguments = (args: Array<string>): ExerciseValues => {
   if (args.length < 4) throw new Error('Not enough arguments!');
 
-  const stringArguments = args.slice(2)
+  const stringArguments = args.slice(2);
   
-  const numberArguments = stringArguments.map((stringNumber) => {
+  const numberArguments: Array<number> = stringArguments.map((stringNumber) => {
     
     if (isNaN(Number(stringNumber))) {
       throw new Error('Provided values were not numbers!');
     }
     else {
-      return Number(stringNumber)
+      return Number(stringNumber);
     }
-  })
+  });
   
   const targetValue = numberArguments.shift();
+  if (!targetValue) {
+    throw new Error('Target value wasn\'t provided!');
+  }
 
-  let dailyExerciseHours: Array<number> = [];
+  const dailyExerciseHours: Array<number> = [];
 
   numberArguments.forEach((number) => {
     dailyExerciseHours.push(number);
-  })
+  });
 
   return {
     dailyExerciseHours,
     targetValue
-  }
-}
-
+  };
+};
 
 interface Result {
   periodLength: number;
@@ -52,14 +54,14 @@ const calculateExercises = (dailyExerciseHours: Array<number>, targetValue: numb
       trainingDays += 1;
     }
     totalHours += dailyHours;
-  })
+  });
 
   const averageHours = totalHours / dailyExerciseHours.length;
 
   const difference = averageHours - targetValue;
   
-  let rating = null
-  let ratingDescription = null
+  let rating = null;
+  let ratingDescription = null;
 
   if (difference >= -2 && difference < -1) {
     rating = 1;
