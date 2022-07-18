@@ -35,7 +35,7 @@ const parseExerciseArguments = (args: Array<string>): ExerciseValues => {
   };
 };
 
-interface Result {
+export interface Result {
   periodLength: number;
   trainingDays: number;
   success: boolean;
@@ -45,7 +45,7 @@ interface Result {
   average: number;
 }
 
-const calculateExercises = (dailyExerciseHours: Array<number>, targetValue: number): Result => {
+export const calculateExercises = (dailyExerciseHours: Array<number>, targetValue: number): Result => {
   let totalHours = 0;
   let trainingDays = 0;
   
