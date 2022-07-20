@@ -1,6 +1,7 @@
 import express from 'express';
 import patientService from '../services/patientService';
 import toNewPatientEntry from '../utils';
+import { parseID } from '../utils';
 
 const router = express.Router();
 
@@ -24,6 +25,16 @@ router.post('/', (req, res) => {
     }
 
     res.status(400).send(errorMessage);
+  }
+});
+
+router.get('/:id', (req, res) => {
+  const patient = patientService.findById(parseID(req.params.id));
+
+  if (patient) {
+    res.send(patient);
+  } else {
+    res.sendStatus(404);
   }
 });
 
