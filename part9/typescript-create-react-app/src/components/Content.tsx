@@ -1,24 +1,35 @@
-interface Course {
-  name: string;
-  exerciseCount: number;
-}
+import { CoursePart } from '../types';
+import Part from './Part';
 
 interface ContentProps {
-  courseParts: Array<Course>;
+  courseParts: Array<CoursePart>;
 }
+
+const assertNever = (value: never): never => {
+  throw new Error(
+    `Unhandled discriminated union member: ${JSON.stringify(value)}`
+  );
+};
 
 const Content = ({ courseParts }: ContentProps): JSX.Element => {
   return (
     <div>
-      <p>
-      {courseParts[0].name} {courseParts[0].exerciseCount}
-      </p>
-      <p>
-      {courseParts[1].name} {courseParts[1].exerciseCount}
-      </p>
-      <p>
-      {courseParts[2].name} {courseParts[2].exerciseCount}
-      </p>
+      <>
+        {courseParts.map(part => {
+          switch (part.type) {
+            case 'normal':
+              return <Part key={part.name} coursePart={part} />;
+            case 'groupProject':
+              return <Part key={part.name} coursePart={part} />;
+            case 'submission':
+              return <Part key={part.name} coursePart={part} />;
+            case 'special':
+              return <Part key={part.name} coursePart={part} />;
+            default:
+              assertNever(part);
+          }
+        })}
+      </>
     </div>
   );
 };
