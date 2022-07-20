@@ -5,6 +5,7 @@ import axios from "axios";
 
 import { apiBaseUrl } from "../constants";
 import { Patient } from "../types";
+import { getPatientData } from "../state";
 
 const IndividualPatientPage = () => {
   // Määritetään muuttujiin tilaan tallennettu käyttäjän valitsema potilas,
@@ -35,7 +36,8 @@ const IndividualPatientPage = () => {
             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             `${apiBaseUrl}/patients/${id}`
           );
-          dispatch({ type: "GET_PATIENT_DATA", payload: patientData });
+          // Haetaan potilaan tiedot action creatorin avulla.
+          dispatch(getPatientData(patientData));
         }
         
       } catch (error: unknown) {
