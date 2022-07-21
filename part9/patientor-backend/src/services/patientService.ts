@@ -1,5 +1,5 @@
 import patients from "../../data/patients";
-import { Entry, NewEntry, Patient } from "../types";
+import { NewEntry, Patient } from "../types";
 import { NonSensitivePatient, NewPatient } from "../types";
 import { v1 as uuid } from 'uuid';
 
@@ -34,24 +34,22 @@ const findById = (id: string): Patient | undefined => {
   return patient;
 };
 
-const addEntry = (patient: Patient, entry: NewEntry): Entry => {
+const addEntry = (patient: Patient, entry: NewEntry): Patient => {
+
+  const patientToUpdate = patients.find(patientInDb => patientInDb.id === patient.id);
   
   const newEntry = {
     id: uuid(),
     ...entry
   };
-  
-  const updatedPatient = {
-    ...patient,
-    entries: patient.entries.push(newEntry)
-  };
-  patients.map(
-    existingPatient => existingPatient.id === updatedPatient.id
-      ? updatedPatient
-      : existingPatient
-  );
 
-  return newEntry;
+  if (!patientToUpdate) {
+    throw new Error('Patient with specified id could not be found.');
+  }
+
+  patientToUpdate.entries.push(newEntry);
+
+  return patientToUpdate;
 };
 
 export default {

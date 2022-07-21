@@ -1,5 +1,5 @@
-import { useStateValue } from "../state";
-import { useEffect } from "react";
+import { addHealthCheckEntry, useStateValue } from "../state";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
@@ -9,10 +9,23 @@ import { getPatientData } from "../state";
 import Entries from "./Entries";
 import { Button } from "@material-ui/core";
 
+import { HealthCheckFormValues } from "../AddHealthCheckEntry/AddHealthCheckEntry";
+import AddHealthCheckModal from "../AddHealthCheckEntry";
+
 const IndividualPatientPage = () => {
   // Määritetään muuttujiin tilaan tallennettu käyttäjän valitsema potilas,
   // sekä dispatch() -metodi, joka mahdollistaa tilan manipuloinnin.
   const [{ selectedPatientData }, dispatch] = useStateValue();
+
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [error, setError] = useState<string>();
+
+  const openModal = (): void => setModalOpen(true);
+
+  const closeModal = (): void => {
+    setModalOpen(false);
+    setError(undefined);
+  };
 
   // Tallennetaan muuttujaan osoitekentässä oleva potilaan tunniste.
   const { id } = useParams<{ id: string }>();
@@ -53,6 +66,25 @@ const IndividualPatientPage = () => {
     return null;
   }
 
+  const submitNewHealthCheckEntry = async (values: HealthCheckFormValues) => {
+    try {
+      const { data: newHealthCheckEntry } = await axios.post<Patient>(
+        `${apiBaseUrl}/patients/${currentPatientData.id}/entries`,
+        values
+      );
+      dispatch(addHealthCheckEntry(newHealthCheckEntry));
+      closeModal();
+    } catch (e: unknown) {
+      if (axios.isAxiosError(e)) {
+        console.error(e?.response?.data || "Unrecognized axios error");
+        setError(String(e?.response?.data?.error) || "Unrecognized axios error");
+      } else {
+        console.error("Unknown error", e);
+        setError("Unknown error");
+      }
+    }
+  };
+
   return (
     <div>
       <div>
@@ -71,12 +103,17 @@ const IndividualPatientPage = () => {
           </div>
           );
         })}
-
-        <Button variant="contained" color="primary">
-            Add new entry
-        </Button>
-
       </div>
+      <AddHealthCheckModal
+        modalOpen={modalOpen}
+        onSubmit={submitNewHealthCheckEntry}
+        error={error}
+        onClose={closeModal}
+      />
+      
+      <Button variant="contained" color="primary" onClick={() => openModal()}>
+          Add new health check entry
+      </Button>
     </div>
   );
 };

@@ -17,6 +17,10 @@ export type Action =
   | {
       type: "SET_DIAGNOSES_DATA";
       payload: Diagnosis[];
+    }
+  | {
+      type: "ADD_HEALTH_CHECK_ENTRY";
+      payload: Patient;
     };
 
 export const reducer = (state: State, action: Action): State => {
@@ -52,7 +56,15 @@ export const reducer = (state: State, action: Action): State => {
         return {
           ...state,
           diagnoses: action.payload
-        };
+      };
+      case "ADD_HEALTH_CHECK_ENTRY":
+        return {
+          ...state,
+          selectedPatientData: {
+            ...state.selectedPatientData,
+            [action.payload.id]: action.payload
+          }
+      };
     default:
       return state;
   }
@@ -88,6 +100,13 @@ export const getPatientData = (data: Patient): Action => {
 export const setDiagnosesData = (data: Diagnosis[]): Action => {
   return {
     type: 'SET_DIAGNOSES_DATA',
+    payload: data
+  };
+};
+
+export const addHealthCheckEntry = (data: Patient): Action => {
+  return {
+    type: 'ADD_HEALTH_CHECK_ENTRY',
     payload: data
   };
 };
