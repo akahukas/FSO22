@@ -53,11 +53,33 @@ const IndividualPatientPage = () => {
 
   return (
     <div>
-      <h1>{currentPatientData.name}</h1>
-      <p>Social Security Number (SSN): {currentPatientData.ssn}</p>
-      <p>Date of Birth: {currentPatientData.dateOfBirth}</p>
-      <p>Gender: {currentPatientData.gender}</p>
-      <p>Occupation: {currentPatientData.occupation}</p>
+      <div>
+        <h1>{currentPatientData.name}</h1>
+        <p>Social Security Number (SSN): {currentPatientData.ssn}</p>
+        <p>Date of Birth: {currentPatientData.dateOfBirth}</p>
+        <p>Gender: {currentPatientData.gender}</p>
+        <p>Occupation: {currentPatientData.occupation}</p>
+      </div>
+      <div>
+        <h2>Entries:</h2>
+        {currentPatientData.entries.map((entry) => {
+          return (
+          <div key={entry.id}>
+          <p>{entry.date} <i>{entry.description}</i></p>
+
+          <ul>
+            {entry.diagnosisCodes?.map((code) => {
+              return (
+              <li key={code}>
+                {code}
+              </li>
+              );
+            })}
+          </ul>
+          </div>
+          );
+        })}
+      </div>
     </div>
   );
 };
