@@ -25,6 +25,10 @@ export type Action =
   | {
       type: "ADD_HOSPITAL_ENTRY";
       payload: Patient;
+    }
+  | {
+      type: "ADD_OCCUPATIONAL_HEALTHCARE_ENTRY";
+      payload: Patient;
     };
 
 export const reducer = (state: State, action: Action): State => {
@@ -70,6 +74,14 @@ export const reducer = (state: State, action: Action): State => {
           }
       };
       case "ADD_HOSPITAL_ENTRY":
+        return {
+          ...state,
+          selectedPatientData: {
+            ...state.selectedPatientData,
+            [action.payload.id]: action.payload
+          }
+      };
+      case "ADD_OCCUPATIONAL_HEALTHCARE_ENTRY":
         return {
           ...state,
           selectedPatientData: {
@@ -130,6 +142,13 @@ export const addHealthCheckEntry = (data: Patient): Action => {
 export const addHospitalEntry = (data: Patient): Action => {
   return {
     type: 'ADD_HOSPITAL_ENTRY',
+    payload: data
+  };
+};
+
+export const addOccupationalHealthcareEntry = (data: Patient): Action => {
+  return {
+    type: 'ADD_OCCUPATIONAL_HEALTHCARE_ENTRY',
     payload: data
   };
 };

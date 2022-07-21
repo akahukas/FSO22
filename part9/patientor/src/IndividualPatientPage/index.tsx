@@ -1,4 +1,4 @@
-import { addHealthCheckEntry, useStateValue } from "../state";
+import { addHealthCheckEntry, addHospitalEntry, addOccupationalHealthcareEntry, useStateValue } from "../state";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -14,6 +14,9 @@ import AddHealthCheckModal from "../AddHealthCheckEntry";
 
 import { HospitalFormValues } from "../AddHospitalEntry/AddHospitalEntry";
 import AddHospitalModal from "../AddHospitalEntry";
+
+import { OccupationalHealthcareFormValues } from "../AddOccupationalHealthCareEntry/AddOccupationalHealthCareEntry";
+import AddOccupationalHealthcareModal from "../AddOccupationalHealthCareEntry";
 
 const IndividualPatientPage = () => {
   // Määritetään muuttujiin tilaan tallennettu käyttäjän valitsema potilas,
@@ -74,6 +77,15 @@ const IndividualPatientPage = () => {
     setError(undefined);
   };
 
+  const [occupationalHealthcareModalOpen, setoccupationalHealthcareModalOpen] = useState<boolean>(false);
+
+  const openOccupationalHealthcareModal = (): void => setoccupationalHealthcareModalOpen(true);
+
+  const closeOccupationalHealthcareModal = (): void => {
+    setoccupationalHealthcareModalOpen(false);
+    setError(undefined);
+  };
+
   if (!currentPatientData) {
     return null;
   }
@@ -103,8 +115,27 @@ const IndividualPatientPage = () => {
         `${apiBaseUrl}/patients/${currentPatientData.id}/entries`,
         values
       );
-      dispatch(addHealthCheckEntry(newHospitalEntry));
+      dispatch(addHospitalEntry(newHospitalEntry));
       closeHospitalModal();
+    } catch (e: unknown) {
+      if (axios.isAxiosError(e)) {
+        console.error(e?.response?.data || "Unrecognized axios error");
+        setError(String(e?.response?.data?.error) || "Unrecognized axios error");
+      } else {
+        console.error("Unknown error", e);
+        setError("Unknown error");
+      }
+    }
+  };
+
+  const submitNewOccupationalHealthcareEntry = async (values: OccupationalHealthcareFormValues) => {
+    try {
+      const { data: newOccupationalHealthcareEntry } = await axios.post<Patient>(
+        `${apiBaseUrl}/patients/${currentPatientData.id}/entries`,
+        values
+      );
+      dispatch(addOccupationalHealthcareEntry(newOccupationalHealthcareEntry));
+      closeOccupationalHealthcareModal();
     } catch (e: unknown) {
       if (axios.isAxiosError(e)) {
         console.error(e?.response?.data || "Unrecognized axios error");
@@ -148,12 +179,37 @@ const IndividualPatientPage = () => {
         error={error}
         onClose={closeHospitalModal}
       />
+
+      <AddOccupationalHealthcareModal
+        modalOpen={occupationalHealthcareModalOpen}
+        onSubmit={submitNewOccupationalHealthcareEntry}
+        error={error}
+        onClose={closeOccupationalHealthcareModal}
+      />
       
-      <Button variant="contained" color="primary" onClick={() => openHealthCheckModal()}>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => openHealthCheckModal()}
+        style={{margin: '5px'}}
+      >
           Add health check entry
       </Button>
-      <Button variant="contained" color="primary" onClick={() => openHospitalModal()}>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => openHospitalModal()}
+        style={{margin: '5px'}}
+      >
           Add hospital entry
+      </Button>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => openOccupationalHealthcareModal()}
+        style={{margin: '5px'}}
+      >
+          Add occupational healthcare entry
       </Button>
     </div>
   );
