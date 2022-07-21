@@ -6,11 +6,13 @@ import axios from "axios";
 import { apiBaseUrl } from "../constants";
 import { Patient } from "../types";
 import { getPatientData } from "../state";
+import Entries from "./Entries";
+import { Button } from "@material-ui/core";
 
 const IndividualPatientPage = () => {
   // Määritetään muuttujiin tilaan tallennettu käyttäjän valitsema potilas,
   // sekä dispatch() -metodi, joka mahdollistaa tilan manipuloinnin.
-  const [{ selectedPatientData, diagnoses }, dispatch] = useStateValue();
+  const [{ selectedPatientData }, dispatch] = useStateValue();
 
   // Tallennetaan muuttujaan osoitekentässä oleva potilaan tunniste.
   const { id } = useParams<{ id: string }>();
@@ -65,20 +67,15 @@ const IndividualPatientPage = () => {
         {currentPatientData.entries.map((entry) => {
           return (
           <div key={entry.id}>
-          <p>{entry.date} <i>{entry.description}</i></p>
-
-          <ul>
-            {entry.diagnosisCodes?.map((entryCode) => {
-              return (
-              <li key={entryCode}>
-                {entryCode} {diagnoses.find(diagnosis => diagnosis.code === entryCode)?.name}
-              </li>
-              );
-            })}
-          </ul>
+            <Entries entry={entry} />
           </div>
           );
         })}
+
+        <Button variant="contained" color="primary">
+            Add new entry
+        </Button>
+
       </div>
     </div>
   );
