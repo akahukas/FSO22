@@ -21,6 +21,10 @@ export type Action =
   | {
       type: "ADD_HEALTH_CHECK_ENTRY";
       payload: Patient;
+    }
+  | {
+      type: "ADD_HOSPITAL_ENTRY";
+      payload: Patient;
     };
 
 export const reducer = (state: State, action: Action): State => {
@@ -65,6 +69,14 @@ export const reducer = (state: State, action: Action): State => {
             [action.payload.id]: action.payload
           }
       };
+      case "ADD_HOSPITAL_ENTRY":
+        return {
+          ...state,
+          selectedPatientData: {
+            ...state.selectedPatientData,
+            [action.payload.id]: action.payload
+          }
+      };
     default:
       return state;
   }
@@ -97,6 +109,8 @@ export const getPatientData = (data: Patient): Action => {
   };
 };
 
+// Action creator palvelimelta haettujen
+// diagnoosien asettamiseksi sovelluksen tilaan.
 export const setDiagnosesData = (data: Diagnosis[]): Action => {
   return {
     type: 'SET_DIAGNOSES_DATA',
@@ -104,9 +118,18 @@ export const setDiagnosesData = (data: Diagnosis[]): Action => {
   };
 };
 
+// Action creatorit sovelluksessa luodun
+// hoitotiedon lähettämiseen tallentamiseen palvelimelle.
 export const addHealthCheckEntry = (data: Patient): Action => {
   return {
     type: 'ADD_HEALTH_CHECK_ENTRY',
+    payload: data
+  };
+};
+
+export const addHospitalEntry = (data: Patient): Action => {
+  return {
+    type: 'ADD_HOSPITAL_ENTRY',
     payload: data
   };
 };

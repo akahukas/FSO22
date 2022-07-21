@@ -1,36 +1,32 @@
 import { Grid, Button } from "@material-ui/core";
 import { Field, Formik, Form } from "formik";
 
-import { SelectField } from "./FormField";
-import { TextField } from "../AddPatientModal/FormField";
-
-import { HealthCheckEntry, HealthCheckRating } from "../types";
-import { HealthCheckRatingOption } from "./FormField";
+import { TextField, DiagnosisSelection } from "../AddPatientModal/FormField";
+import { HospitalEntry } from "../types";
+import { useStateValue } from "../state";
 
 
-export type HealthCheckFormValues = Omit<HealthCheckEntry, 'id'>;
+export type HospitalFormValues = Omit<HospitalEntry, 'id'>;
 
 interface Props {
-  onSubmit: (values: HealthCheckFormValues) => void;
+  onSubmit: (values: HospitalFormValues) => void;
   onCancel: () => void;
 }
 
-const healthCheckRatingOptions: HealthCheckRatingOption[] = [
-  { value: HealthCheckRating.Healthy, label: 'Healthy' },
-  { value: HealthCheckRating.LowRisk, label: 'Low risk' },
-  { value: HealthCheckRating.HighRisk, label: 'High risk' },
-  { value: HealthCheckRating.CriticalRisk, label: 'Critical risk' },
-];
+export const AddHospitalForm = ({ onSubmit, onCancel }: Props) => {
+  const [{ diagnoses }] = useStateValue();
 
-export const AddHealthCheckForm = ({ onSubmit, onCancel }: Props) => {
   return (
     <Formik
       initialValues={{
-        type: 'HealthCheck',
+        type: 'Hospital',
         description: '',
         date: '',
         specialist: '',
-        healthCheckRating: HealthCheckRating.Healthy,
+        discharge: {
+          date:'',
+          criteria:''
+        }
       }}
       onSubmit={onSubmit}
       validate={(values) => {
@@ -45,13 +41,13 @@ export const AddHealthCheckForm = ({ onSubmit, onCancel }: Props) => {
         if (!values.specialist) {
           errors.specialist = requiredError;
         }
-        if (!values.healthCheckRating) {
-          errors.healthCheckRating = requiredError;
+        if (!values.diagnosisCodes) {
+          errors.diagnosisCodes = requiredError;
         }
         return errors;
       }}
     >
-      {({ isValid, dirty }) => {
+      {({ isValid, dirty, setFieldValue, setFieldTouched }) => {
         return (
           <Form className="form ui">
             <Field
@@ -72,7 +68,25 @@ export const AddHealthCheckForm = ({ onSubmit, onCancel }: Props) => {
               name="specialist"
               component={TextField}
             />
-            <SelectField label="Health Check Rating" name="healthCheckRating" options={healthCheckRatingOptions} />
+            <Field
+              label="Discharge date"
+              placeholder="YYYY-MM-DD"
+              name="discharge.date"
+              component={TextField}
+              required
+            />
+            <Field
+              label="Discharge criteria"
+              placeholder="Criteria"
+              name="discharge.criteria"
+              component={TextField}
+              required
+            />
+            <DiagnosisSelection
+              setFieldValue={setFieldValue}
+              setFieldTouched={setFieldTouched}
+              diagnoses={Object.values(diagnoses)}
+            />
             <Grid>
               <Grid item>
                 <Button
@@ -105,4 +119,4 @@ export const AddHealthCheckForm = ({ onSubmit, onCancel }: Props) => {
   );
 };
 
-export default AddHealthCheckForm;
+export default AddHospitalForm;

@@ -12,20 +12,13 @@ import { Button } from "@material-ui/core";
 import { HealthCheckFormValues } from "../AddHealthCheckEntry/AddHealthCheckEntry";
 import AddHealthCheckModal from "../AddHealthCheckEntry";
 
+import { HospitalFormValues } from "../AddHospitalEntry/AddHospitalEntry";
+import AddHospitalModal from "../AddHospitalEntry";
+
 const IndividualPatientPage = () => {
   // Määritetään muuttujiin tilaan tallennettu käyttäjän valitsema potilas,
   // sekä dispatch() -metodi, joka mahdollistaa tilan manipuloinnin.
   const [{ selectedPatientData }, dispatch] = useStateValue();
-
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const [error, setError] = useState<string>();
-
-  const openModal = (): void => setModalOpen(true);
-
-  const closeModal = (): void => {
-    setModalOpen(false);
-    setError(undefined);
-  };
 
   // Tallennetaan muuttujaan osoitekentässä oleva potilaan tunniste.
   const { id } = useParams<{ id: string }>();
@@ -62,6 +55,25 @@ const IndividualPatientPage = () => {
     void fetchSelectedPatient();
   }, [id]);
 
+  const [healthCheckModalOpen, setHealthCheckModalOpen] = useState<boolean>(false);
+  const [error, setError] = useState<string>();
+
+  const openHealthCheckModal = (): void => setHealthCheckModalOpen(true);
+
+  const closeHealthCheckModal = (): void => {
+    setHealthCheckModalOpen(false);
+    setError(undefined);
+  };
+
+  const [hospitalModalOpen, setHospitalModalOpen] = useState<boolean>(false);
+
+  const openHospitalModal = (): void => setHospitalModalOpen(true);
+
+  const closeHospitalModal = (): void => {
+    setHospitalModalOpen(false);
+    setError(undefined);
+  };
+
   if (!currentPatientData) {
     return null;
   }
@@ -73,7 +85,26 @@ const IndividualPatientPage = () => {
         values
       );
       dispatch(addHealthCheckEntry(newHealthCheckEntry));
-      closeModal();
+      closeHealthCheckModal();
+    } catch (e: unknown) {
+      if (axios.isAxiosError(e)) {
+        console.error(e?.response?.data || "Unrecognized axios error");
+        setError(String(e?.response?.data?.error) || "Unrecognized axios error");
+      } else {
+        console.error("Unknown error", e);
+        setError("Unknown error");
+      }
+    }
+  };
+
+  const submitNewHospitalEntry = async (values: HospitalFormValues) => {
+    try {
+      const { data: newHospitalEntry } = await axios.post<Patient>(
+        `${apiBaseUrl}/patients/${currentPatientData.id}/entries`,
+        values
+      );
+      dispatch(addHealthCheckEntry(newHospitalEntry));
+      closeHospitalModal();
     } catch (e: unknown) {
       if (axios.isAxiosError(e)) {
         console.error(e?.response?.data || "Unrecognized axios error");
@@ -105,14 +136,24 @@ const IndividualPatientPage = () => {
         })}
       </div>
       <AddHealthCheckModal
-        modalOpen={modalOpen}
+        modalOpen={healthCheckModalOpen}
         onSubmit={submitNewHealthCheckEntry}
         error={error}
-        onClose={closeModal}
+        onClose={closeHealthCheckModal}
+      />
+
+      <AddHospitalModal
+        modalOpen={hospitalModalOpen}
+        onSubmit={submitNewHospitalEntry}
+        error={error}
+        onClose={closeHospitalModal}
       />
       
-      <Button variant="contained" color="primary" onClick={() => openModal()}>
-          Add new health check entry
+      <Button variant="contained" color="primary" onClick={() => openHealthCheckModal()}>
+          Add health check entry
+      </Button>
+      <Button variant="contained" color="primary" onClick={() => openHospitalModal()}>
+          Add hospital entry
       </Button>
     </div>
   );
