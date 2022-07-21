@@ -10,7 +10,7 @@ import { getPatientData } from "../state";
 const IndividualPatientPage = () => {
   // Määritetään muuttujiin tilaan tallennettu käyttäjän valitsema potilas,
   // sekä dispatch() -metodi, joka mahdollistaa tilan manipuloinnin.
-  const [{ selectedPatientData }, dispatch] = useStateValue();
+  const [{ selectedPatientData, diagnoses }, dispatch] = useStateValue();
 
   // Tallennetaan muuttujaan osoitekentässä oleva potilaan tunniste.
   const { id } = useParams<{ id: string }>();
@@ -68,10 +68,10 @@ const IndividualPatientPage = () => {
           <p>{entry.date} <i>{entry.description}</i></p>
 
           <ul>
-            {entry.diagnosisCodes?.map((code) => {
+            {entry.diagnosisCodes?.map((entryCode) => {
               return (
-              <li key={code}>
-                {code}
+              <li key={entryCode}>
+                {entryCode} {diagnoses.find(diagnosis => diagnosis.code === entryCode)?.name}
               </li>
               );
             })}
