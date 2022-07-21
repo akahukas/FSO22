@@ -9,12 +9,15 @@ import { getPatientData } from "../state";
 import Entries from "./Entries";
 import { Button } from "@material-ui/core";
 
+// Terveystarkastuslomake.
 import { HealthCheckFormValues } from "../AddHealthCheckEntry/AddHealthCheckEntry";
 import AddHealthCheckModal from "../AddHealthCheckEntry";
 
+// Sairaalalomake.
 import { HospitalFormValues } from "../AddHospitalEntry/AddHospitalEntry";
 import AddHospitalModal from "../AddHospitalEntry";
 
+// Työterveystarkastuslomake.
 import { OccupationalHealthcareFormValues } from "../AddOccupationalHealthCareEntry/AddOccupationalHealthCareEntry";
 import AddOccupationalHealthcareModal from "../AddOccupationalHealthCareEntry";
 
@@ -58,6 +61,7 @@ const IndividualPatientPage = () => {
     void fetchSelectedPatient();
   }, [id]);
 
+  // Terveystarkastuslomakkeen tilan- ja sulkemisenhallinta.
   const [healthCheckModalOpen, setHealthCheckModalOpen] = useState<boolean>(false);
   const [error, setError] = useState<string>();
 
@@ -68,6 +72,7 @@ const IndividualPatientPage = () => {
     setError(undefined);
   };
 
+  // Sairaalalomakkeen tilan- ja sulkemisenhallinta.
   const [hospitalModalOpen, setHospitalModalOpen] = useState<boolean>(false);
 
   const openHospitalModal = (): void => setHospitalModalOpen(true);
@@ -77,6 +82,7 @@ const IndividualPatientPage = () => {
     setError(undefined);
   };
 
+  // Työterveystarkastuslomakkeen tilan- ja sulkemisenhallinta.
   const [occupationalHealthcareModalOpen, setoccupationalHealthcareModalOpen] = useState<boolean>(false);
 
   const openOccupationalHealthcareModal = (): void => setoccupationalHealthcareModalOpen(true);
@@ -90,6 +96,7 @@ const IndividualPatientPage = () => {
     return null;
   }
 
+  // Terveystarkastuslomakkeen lähetyksen tapahtumankäsittelijä.
   const submitNewHealthCheckEntry = async (values: HealthCheckFormValues) => {
     try {
       const { data: newHealthCheckEntry } = await axios.post<Patient>(
@@ -109,6 +116,7 @@ const IndividualPatientPage = () => {
     }
   };
 
+  // Sairaalalomakkeen lähetyksen tapahtumankäsittelijä.
   const submitNewHospitalEntry = async (values: HospitalFormValues) => {
     try {
       const { data: newHospitalEntry } = await axios.post<Patient>(
@@ -128,6 +136,7 @@ const IndividualPatientPage = () => {
     }
   };
 
+  // Työterveystarkastuslomakkeen lähetyksen tapahtumankäsittelijä.
   const submitNewOccupationalHealthcareEntry = async (values: OccupationalHealthcareFormValues) => {
     try {
       const { data: newOccupationalHealthcareEntry } = await axios.post<Patient>(
