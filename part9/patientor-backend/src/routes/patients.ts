@@ -2,6 +2,7 @@ import express from 'express';
 import patientService from '../services/patientService';
 import toNewPatientEntry from '../utils';
 import { parseID } from '../utils';
+import { toNewMedicalEntry } from '../utils';
 
 const router = express.Router();
 
@@ -33,6 +34,18 @@ router.get('/:id', (req, res) => {
 
   if (patient) {
     res.send(patient);
+  } else {
+    res.sendStatus(404);
+  }
+});
+
+router.post('/:id/entries', (req, res) => {
+  const patient = patientService.findById(parseID(req.params.id));
+
+  if (patient) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    const updatedPatient = patientService.addEntry(patient, toNewMedicalEntry(req.body));
+    res.send(updatedPatient);
   } else {
     res.sendStatus(404);
   }
