@@ -6,17 +6,17 @@
 
 #### My task submissions related to [Full Stack Open](https://fullstackopen.com/) -course offered by University of Helsinki.
 
-#### As of Thursday the 15th of September 2022:
+#### As of Saturday the 24th of September 2022:
 
-|         Name         | Part(s) | ECTS |      Status       |
-| :------------------: | :-----: | :--: | :---------------: |
-|   The Core Course    |   0-7   |  7   |    Submitted.     |
-|       GraphQL        |    8    |  1   |    Submitted.     |
-|      TypeScript      |    9    |  1   |    Submitted.     |
-|     React Native     |   10    |  2   |    Submitted.     |
-|       CI / CD        |   11    |  1   |    Submitted.     |
-|      Containers      |   12    |  1   |    Submitted.     |
-| Relational Databases |   13    |  1   | Work In Progress. |
+|         Name         | Part(s) | ECTS |   Status   |
+| :------------------: | :-----: | :--: | :--------: |
+|   The Core Course    |   0-7   |  7   | Submitted. |
+|       GraphQL        |    8    |  1   | Submitted. |
+|      TypeScript      |    9    |  1   | Submitted. |
+|     React Native     |   10    |  2   | Submitted. |
+|       CI / CD        |   11    |  1   | Submitted. |
+|      Containers      |   12    |  1   | Submitted. |
+| Relational Databases |   13    |  1   | Submitted. |
 
 ---
 
@@ -30,6 +30,6 @@
 |     React Native     | Certificate in [English](https://studies.cs.helsinki.fi/stats/api/certificate/fs-react-native-2020/en/c0e67caee3afc3e0290e2da8e6d7b576) or in [Finnish](https://studies.cs.helsinki.fi/stats/api/certificate/fs-react-native-2020/fi/c0e67caee3afc3e0290e2da8e6d7b576). | ![React Native certificate in English](./certificate-reactnative-en.png)  |
 |       CI / CD        |              Certificate in [English](https://studies.cs.helsinki.fi/stats/api/certificate/fs-cicd/en/e97bfa01187029938c5a736b512e7ccb) or in [Finnish](https://studies.cs.helsinki.fi/stats/api/certificate/fs-cicd/fi/e97bfa01187029938c5a736b512e7ccb).              |        ![CI/CD certificate in English](./certificate-cicd-en.png)         |
 |      Containers      |                                                                    Certificate in [English](https://studies.cs.helsinki.fi/stats/api/certificate/fs-containers/en/b95e8ccbb94800536fe251c417f76e70).                                                                    |    ![Containers certificate in English](./certificate-containers.png)     |
-| Relational Databases |                                                                                                                              To Be Added.                                                                                                                               |                               To Be Added.                                |
+| Relational Databases |              Certificate in [English](https://studies.cs.helsinki.fi/stats/api/certificate/fs-psql/en/185102c5aefee62af706dee8d8b8515b) or in [Finnish](https://studies.cs.helsinki.fi/stats/api/certificate/fs-psql/fi/185102c5aefee62af706dee8d8b8515b).              |      ![Containers certificate in English](./certificate-psql-en.png)      |
 
 ---
